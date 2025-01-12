@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "directory-printer"
+version = "0.1.0"
+description = "A GUI application for viewing and exporting directory structures"
+authors = ["ysskrishna <sivasaikrishnassk@gmail.com>"]
+license = "AGPL-3.0"
+readme = "README.md"
+packages = [{include = "directory_printer"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+black = "^24.1.0"
+isort = "^5.13.0"
+pylint = "^3.0.0"
+
+[tool.poetry.scripts]
+directory-printer = "directory_printer.gui.app:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+
+[tool.pylint.messages_control]
+disable = ["C0111", "C0103", "C0330", "C0326"]
+
+[tool.pylint.format]
+max-line-length = 100
