@@ -7,9 +7,15 @@ license = "AGPL-3.0"
 readme = "README.md"
 packages = [{include = "directory_printer"}]
 
+[tool.directory_printer.ui]
+author_name = "ysskrishna"
+author_linkedin = "https://linkedin.com/in/ysskrishna"
+repository_url = "https://github.com/ysskrishna/directory-printer"
+
 [tool.poetry.dependencies]
 python = "^3.8"
 Pillow = "^10.2.0"
+tomli = "^2.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.1.0"
@@ -33,7 +39,7 @@ line_length = 100
 multi_line_output = 3
 
 [tool.pylint.messages_control]
-disable = ["C0111", "C0103", "C0330", "C0326"]
+disable = ["C0111", "C0103"]
 
 [tool.pylint.format]
 max-line-length = 100
