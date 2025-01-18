@@ -9,6 +9,7 @@ packages = [{include = "directory_printer"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+Pillow = "^10.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.1.0"
