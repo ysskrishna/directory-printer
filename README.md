@@ -62,6 +62,43 @@ poetry run isort .
 poetry run pylint directory_printer
 ```
 
+### Pre-commit Hooks
+
+This project uses pre-commit hooks to ensure code quality. The hooks run:
+- black (code formatting)
+- isort (import sorting)
+
+#### Setup
+
+1. Install dev dependencies:
+```bash
+poetry install
+```
+
+2. Install pre-commit hooks:
+```bash
+poetry run pre-commit install
+```
+
+#### Usage
+
+The hooks will run automatically on every commit. There are two ways to bypass the hooks if needed:
+
+1. Skip all hooks:
+```bash
+git commit -m "your message" --no-verify
+```
+
+2. Skip specific hooks:
+```bash
+SKIP=black,isort git commit -m "your message"
+```
+
+You can also run the hooks manually on all files:
+```bash
+poetry run pre-commit run --all-files
+```
+
 ## License
 
 Copyright (c) 2025 [Y. Siva Sai Krishna](https://github.com/ysskrishna)

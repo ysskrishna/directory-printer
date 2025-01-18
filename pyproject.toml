@@ -21,6 +21,7 @@ tomli = "^2.0.1"
 black = "^24.1.0"
 isort = "^5.13.0"
 pylint = "^3.0.0"
+pre-commit = "^3.6.0"
 
 [tool.poetry.scripts]
 directory-printer = "directory_printer.gui.app:main"
