@@ -3,6 +3,7 @@ import tkinter as tk
 import webbrowser
 from importlib.metadata import version
 from tkinter import filedialog, scrolledtext
+import sys
 
 import tomli
 from PIL import Image, ImageTk
@@ -10,10 +11,18 @@ from PIL import Image, ImageTk
 from directory_printer.core.printer import print_structure
 
 
+def get_resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    
+    return os.path.join(base_path, relative_path)
+
+
 def load_config():
-    config_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "pyproject.toml"
-    )
+    config_path = get_resource_path("pyproject.toml")
     with open(config_path, "rb") as f:
         config = tomli.load(f)
     return config.get("tool", {}).get("directory_printer", {}).get("ui", {})
@@ -28,7 +37,7 @@ class DirectoryPrinterApp:
         self.config = load_config()
 
         # Set window icon
-        logo_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "logo.png")
+        logo_path = get_resource_path(os.path.join("directory_printer", "assets", "logo.png"))
         if os.path.exists(logo_path):
             try:
                 icon = Image.open(logo_path)

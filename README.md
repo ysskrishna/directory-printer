@@ -72,6 +72,39 @@ poetry run isort .
 poetry run pylint directory_printer
 ```
 
+### Creating Releases
+
+This project uses GitHub Actions to automatically build and publish binaries when a new version tag is pushed. To create a new release:
+
+1. Update the version in `pyproject.toml`:
+   ```toml
+   [tool.poetry]
+   version = "x.y.z"  # Update this version
+   ```
+
+2. Create and push a new tag:
+   ```bash
+   # Create a new tag
+   git tag v0.1.0  # Replace with your version
+
+   # Push the tag to GitHub
+   git push origin v0.1.0
+   ```
+
+3. GitHub Actions will automatically:
+   - Build binaries for Windows, Linux, and macOS
+   - Create a new release on GitHub
+   - Attach the binaries to the release
+
+To delete a tag if needed:
+```bash
+# Delete local tag
+git tag -d v0.1.0
+
+# Delete remote tag
+git push --delete origin v0.1.0
+```
+
 ### Pre-commit Hooks
 
 This project uses pre-commit hooks to ensure code quality. The hooks run:
