@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -81,6 +84,6 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          directory-printer-windows.zip
-          directory-printer-linux.zip
-          directory-printer-macos.zip 
+          ${{ matrix.os == 'windows-latest' && 'directory-printer-windows.zip' || '' }}
+          ${{ matrix.os == 'ubuntu-latest' && 'directory-printer-linux.zip' || '' }}
+          ${{ matrix.os == 'macos-latest' && 'directory-printer-macos.zip' || '' }} 
