@@ -7,11 +7,21 @@ A GUI application for viewing and exporting directory structures. This tool prov
 - Interactive GUI for directory selection
 - Tree-like visualization of directory structures
 - Handles permission errors gracefully
-- Cross-platform compatibility
+- Cross-platform compatibility (Windows, Linux, macOS)
 
 ## Installation
 
-This project uses Poetry for dependency management. To install:
+### Option 1: Download Binary (Recommended)
+
+Download the latest release for your operating system from the [Releases page](https://github.com/ysskrishna/directory-printer/releases).
+
+- Windows: Download and extract `directory-printer-windows.zip`
+- Linux: Download and extract `directory-printer-linux.zip`
+- macOS: Download and extract `directory-printer-macos.zip`
+
+### Option 2: Install from Source
+
+This project uses Poetry for dependency management. To install from source:
 
 1. Make sure you have Poetry installed:
    ```bash

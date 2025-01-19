@@ -13,7 +13,7 @@ author_linkedin = "https://linkedin.com/in/ysskrishna"
 repository_url = "https://github.com/ysskrishna/directory-printer"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.9,<3.13"
 Pillow = "^10.2.0"
 tomli = "^2.0.1"
 
@@ -22,6 +22,7 @@ black = "^24.1.0"
 isort = "^5.13.0"
 pylint = "^3.0.0"
 pre-commit = "^3.6.0"
+pyinstaller = "^6.4.0"
 
 [tool.poetry.scripts]
 directory-printer = "directory_printer.gui.app:main"
