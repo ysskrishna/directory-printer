@@ -11,19 +11,23 @@ a = Analysis(
         ('pyproject.toml', '.'),
     ],
     hiddenimports=[
-        '3c22db458360489351e4__mypyc',
-        'tomli',
-        'tomli._parser',
-        'tomli._re',
-        'tomli._types',
-        'PIL',
-        'PIL._tkinter_finder',
+        # Core Python imports
         'tkinter',
         'tkinter.filedialog',
         'tkinter.scrolledtext',
+        'webbrowser',
+        
+        # PIL/Pillow imports
+        'PIL',
+        'PIL._tkinter_finder',
         'PIL.Image',
         'PIL.ImageTk',
-        'webbrowser'
+        
+        # TOML parsing
+        'tomli',
+        'tomli._parser',
+        'tomli._re',
+        'tomli._types'
     ],
     hookspath=[],
     hooksconfig={},
