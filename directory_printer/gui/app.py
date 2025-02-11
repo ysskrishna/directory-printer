@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 import webbrowser
 from importlib.metadata import version
-from tkinter import filedialog, scrolledtext, messagebox
+from tkinter import filedialog, scrolledtext, messagebox, ttk
 import sys
 
 import tomli
@@ -32,10 +32,11 @@ class DirectoryPrinterApp:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title(f"Directory Printer v{version('directory-printer')}")
-        self.root.minsize(600, 400)
+        self.root.minsize(700, 400)
         self.logo_image = None
         self.config = load_config()
-        self.last_selected_folder = None
+        self.selected_folder = None
+        self.gitignore_path = None
 
         # Set window icon
         logo_path = get_resource_path(os.path.join("directory_printer", "assets", "logo.png"))
@@ -64,58 +65,165 @@ class DirectoryPrinterApp:
         main_frame = tk.Frame(self.root, padx=10, pady=10)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        browse_button = tk.Button(main_frame, text="Select Folder", command=self.browse_folder)
-        browse_button.pack(pady=5)
+        # Directory selection row
+        dir_frame = ttk.Frame(main_frame)
+        dir_frame.pack(fill=tk.X, pady=(0, 5))
+        dir_frame.grid_columnconfigure(1, weight=1)  # Make the entry expand
+        
+        dir_label = ttk.Label(dir_frame, text="Select Directory", width=25)
+        dir_label.grid(row=0, column=0, padx=5)
+        
+        self.directory_var = tk.StringVar()
+        self.directory_entry = ttk.Entry(dir_frame, textvariable=self.directory_var)
+        self.directory_entry.grid(row=0, column=1, padx=5, sticky='ew')
+        
+        browse_btn = ttk.Button(dir_frame, text="Browse", command=self.browse_folder)
+        browse_btn.grid(row=0, column=2, padx=2)
+        
+        clear_btn = ttk.Button(dir_frame, text="Clear", command=self.clear_directory)
+        clear_btn.grid(row=0, column=3, padx=2)
 
+        # Gitignore selection row
+        gitignore_frame = ttk.Frame(main_frame)
+        gitignore_frame.pack(fill=tk.X, pady=(0, 10))
+        gitignore_frame.grid_columnconfigure(1, weight=1)  # Make the entry expand
+        
+        gitignore_label = ttk.Label(gitignore_frame, text="Select ignore file (Optional)", width=25)
+        gitignore_label.grid(row=0, column=0, padx=5)
+        
+        self.gitignore_var = tk.StringVar()
+        self.gitignore_entry = ttk.Entry(gitignore_frame, textvariable=self.gitignore_var)
+        self.gitignore_entry.grid(row=0, column=1, padx=5, sticky='ew')
+        
+        browse_gitignore_btn = ttk.Button(gitignore_frame, text="Browse", command=self.select_gitignore)
+        browse_gitignore_btn.grid(row=0, column=2, padx=2)
+        
+        clear_gitignore_btn = ttk.Button(gitignore_frame, text="Clear", command=self.clear_gitignore)
+        clear_gitignore_btn.grid(row=0, column=3, padx=2)
+
+        # Action buttons
+        action_frame = ttk.Frame(main_frame)
+        action_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        ttk.Button(action_frame, text="Generate Directory Structure", command=self.process_directory).pack(side=tk.LEFT, padx=2)
+        ttk.Button(action_frame, text="Reset All", command=self.reset_all).pack(side=tk.LEFT, padx=2)
+
+        # Progress bar (hidden initially)
+        self.progress_frame = ttk.Frame(main_frame)
+        self.progress_frame.pack(fill=tk.X, pady=5)
+        self.progress_bar = ttk.Progressbar(self.progress_frame, mode='determinate')
+        self.progress_label = ttk.Label(self.progress_frame, text="")
+        
+        # Output area
         self.output_text = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=80, height=25)
         self.output_text.pack(pady=5, fill=tk.BOTH, expand=True)
 
         # Buttons frame for copy and download
-        buttons_frame = tk.Frame(main_frame)
-        buttons_frame.pack(fill=tk.X, pady=(0, 5))
+        buttons_frame = ttk.Frame(main_frame)
+        buttons_frame.pack(fill=tk.X, pady=(5, 0))
+        buttons_frame.grid_columnconfigure(1, weight=1)  # Add weight to create space between buttons and links
 
-        copy_button = tk.Button(buttons_frame, text="Copy to Clipboard", command=self.copy_to_clipboard)
-        copy_button.pack(side=tk.LEFT, padx=2)
+        # Left side - action buttons
+        left_buttons = ttk.Frame(buttons_frame)
+        left_buttons.grid(row=0, column=0, sticky='w')
+        ttk.Button(left_buttons, text="Copy to Clipboard", command=self.copy_to_clipboard).pack(side=tk.LEFT, padx=2)
+        ttk.Button(left_buttons, text="Download", command=self.download_as_txt).pack(side=tk.LEFT, padx=2)
 
-        download_button = tk.Button(buttons_frame, text="Download as TXT", command=self.download_as_txt)
-        download_button.pack(side=tk.LEFT, padx=2)
-
-        # Footer section
-        footer_frame = tk.Frame(main_frame)
-        footer_frame.pack(fill=tk.X, pady=(5, 0))
-
-        author_frame = tk.Frame(footer_frame)
-        author_frame.pack(side=tk.LEFT)
+        # Right side - links
+        links_frame = ttk.Frame(buttons_frame)
+        links_frame.grid(row=0, column=2, sticky='e')
 
         author_link = self.create_link_label(
-            author_frame, self.config.get("author_name"), self.config.get("author_linkedin")
+            links_frame, self.config.get("author_name"), self.config.get("author_linkedin")
         )
         author_link.pack(side=tk.LEFT)
 
-        separator = tk.Label(author_frame, text=" | ", font=("Helvetica", 8))
-        separator.pack(side=tk.LEFT)
+        separator1 = ttk.Label(links_frame, text=" | ")
+        separator1.pack(side=tk.LEFT)
 
         product_hunt_link = self.create_link_label(
-            author_frame, "producthunt", self.config.get("product_hunt_url")
+            links_frame, "producthunt", self.config.get("product_hunt_url")
         )
         product_hunt_link.pack(side=tk.LEFT)
 
-        separator = tk.Label(author_frame, text=" | ", font=("Helvetica", 8))
-        separator.pack(side=tk.LEFT)
+        separator2 = ttk.Label(links_frame, text=" | ")
+        separator2.pack(side=tk.LEFT)
 
         github_link = self.create_link_label(
-            author_frame, "github", self.config.get("github_repo_url")
+            links_frame, "github", self.config.get("github_repo_url")
         )
         github_link.pack(side=tk.LEFT)
+
+    def select_gitignore(self):
+        file_path = filedialog.askopenfilename(
+            title="Select .gitignore file",
+            filetypes=[(".gitignore", ".gitignore"), ("All files", "*.*")]
+        )
+        if file_path:
+            self.gitignore_path = file_path
+            self.gitignore_var.set(file_path)
+        else:
+            self.gitignore_path = None
+            self.gitignore_var.set("")
+
+    def clear_directory(self):
+        self.selected_folder = None
+        self.directory_var.set("")
+
+    def clear_gitignore(self):
+        self.gitignore_path = None
+        self.gitignore_var.set("")
+
+    def reset_all(self):
+        self.clear_directory()
+        self.clear_gitignore()
+        self.output_text.delete("1.0", tk.END)
+        self.progress_bar["value"] = 0
+        self.progress_label.config(text="")
+        self.progress_bar.pack_forget()
+        self.progress_label.pack_forget()
+
+    def process_directory(self):
+        if not self.selected_folder:
+            messagebox.showwarning("Warning", "Please select a directory first!")
+            return
+
+        self.output_text.delete("1.0", tk.END)
+        self.output_text.insert(tk.END, f"{self.selected_folder}\n")
+        
+        # Reset progress bar
+        self.progress_bar["value"] = 0
+        self.progress_label.config(text="")
+        
+        try:
+            output_list = print_structure(
+                self.selected_folder,
+                gitignore_path=self.gitignore_path,
+                progress_callback=self.update_progress
+            )
+            self.output_text.insert(tk.END, "\n".join(output_list))
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to process directory: {str(e)}")
+        finally:
+            # Hide progress bar when done
+            self.progress_bar.pack_forget()
+            self.progress_label.pack_forget()
+
+    def update_progress(self, current: int, total: int):
+        if not self.progress_bar.winfo_ismapped():
+            self.progress_bar.pack(fill=tk.X, side=tk.TOP)
+            self.progress_label.pack(side=tk.TOP)
+        
+        progress = (current / total) * 100
+        self.progress_bar["value"] = progress
+        self.progress_label.config(text=f"Processing: {current}/{total} entries ({progress:.1f}%)")
+        self.root.update()
 
     def browse_folder(self):
         folder_selected = filedialog.askdirectory()
         if folder_selected:
-            self.last_selected_folder = folder_selected
-            self.output_text.delete("1.0", tk.END)
-            self.output_text.insert(tk.END, f"{folder_selected}\n")
-            output_list = print_structure(folder_selected)
-            self.output_text.insert(tk.END, "\n".join(output_list))
+            self.selected_folder = folder_selected
+            self.directory_var.set(folder_selected)
 
     def copy_to_clipboard(self):
         content = self.output_text.get("1.0", tk.END).strip()
@@ -133,8 +241,8 @@ class DirectoryPrinterApp:
             return
 
         default_name = "directory_structure.txt"
-        if self.last_selected_folder:
-            default_name = os.path.basename(self.last_selected_folder) + ".txt"
+        if self.selected_folder:
+            default_name = os.path.basename(self.selected_folder) + ".txt"
 
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
