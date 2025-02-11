@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "directory-printer"
-version = "0.1.0"
+version = "0.2.0"
 description = "A GUI application for viewing and exporting directory structures"
 authors = ["ysskrishna <sivasaikrishnassk@gmail.com>"]
 license = "AGPL-3.0"
