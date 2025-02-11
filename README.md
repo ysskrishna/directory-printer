@@ -2,7 +2,10 @@
 
 A GUI application for viewing and exporting directory structures. This tool provides a simple and intuitive way to visualize the structure of directories and their contents.
 
-![Directory Printer Header Image](./media/header-image.png)
+
+Check out this short video demonstration of Directory Printer in action:
+
+[![Directory Printer Demo](./media/header-image.png)](https://youtu.be/RWOIlvB1PJU)
 
 ## Features
 
