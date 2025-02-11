@@ -2,6 +2,8 @@
 
 A GUI application for viewing and exporting directory structures. This tool provides a simple and intuitive way to visualize the structure of directories and their contents.
 
+![Directory Printer Header Image](./media/header-image.png)
+
 ## Features
 
 - Interactive GUI for directory selection
@@ -141,6 +143,10 @@ You can also run the hooks manually on all files:
 ```bash
 poetry run pre-commit run --all-files
 ```
+
+## Links
+
+- [Product Hunt](https://www.producthunt.com/posts/directory-printer)
 
 ## License
 
