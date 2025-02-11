@@ -10,7 +10,8 @@ packages = [{include = "directory_printer"}]
 [tool.directory_printer.ui]
 author_name = "ysskrishna"
 author_linkedin = "https://linkedin.com/in/ysskrishna"
-repository_url = "https://github.com/ysskrishna/directory-printer"
+github_repo_url = "https://github.com/ysskrishna/directory-printer"
+product_hunt_url = "https://www.producthunt.com/posts/directory-printer"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"

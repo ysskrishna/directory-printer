@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 import webbrowser
 from importlib.metadata import version
-from tkinter import filedialog, scrolledtext
+from tkinter import filedialog, scrolledtext, messagebox
 import sys
 
 import tomli
@@ -69,6 +69,16 @@ class DirectoryPrinterApp:
         self.output_text = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=80, height=25)
         self.output_text.pack(pady=5, fill=tk.BOTH, expand=True)
 
+        # Buttons frame for copy and download
+        buttons_frame = tk.Frame(main_frame)
+        buttons_frame.pack(fill=tk.X, pady=(0, 5))
+
+        copy_button = tk.Button(buttons_frame, text="Copy to Clipboard", command=self.copy_to_clipboard)
+        copy_button.pack(side=tk.LEFT, padx=2)
+
+        download_button = tk.Button(buttons_frame, text="Download as TXT", command=self.download_as_txt)
+        download_button.pack(side=tk.LEFT, padx=2)
+
         # Footer section
         footer_frame = tk.Frame(main_frame)
         footer_frame.pack(fill=tk.X, pady=(5, 0))
@@ -84,8 +94,16 @@ class DirectoryPrinterApp:
         separator = tk.Label(author_frame, text=" | ", font=("Helvetica", 8))
         separator.pack(side=tk.LEFT)
 
+        product_hunt_link = self.create_link_label(
+            author_frame, "producthunt", self.config.get("product_hunt_url")
+        )
+        product_hunt_link.pack(side=tk.LEFT)
+
+        separator = tk.Label(author_frame, text=" | ", font=("Helvetica", 8))
+        separator.pack(side=tk.LEFT)
+
         github_link = self.create_link_label(
-            author_frame, "Github", self.config.get("repository_url")
+            author_frame, "github", self.config.get("github_repo_url")
         )
         github_link.pack(side=tk.LEFT)
 
@@ -93,9 +111,38 @@ class DirectoryPrinterApp:
         folder_selected = filedialog.askdirectory()
         if folder_selected:
             self.output_text.delete("1.0", tk.END)
-            self.output_text.insert(tk.END, f"Folder structure for: {folder_selected}\n")
+            self.output_text.insert(tk.END, f"{folder_selected}\n")
             output_list = print_structure(folder_selected)
             self.output_text.insert(tk.END, "\n".join(output_list))
+
+    def copy_to_clipboard(self):
+        content = self.output_text.get("1.0", tk.END).strip()
+        if content:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(content)
+            messagebox.showinfo("Success", "Content copied to clipboard!")
+        else:
+            messagebox.showwarning("Warning", "No content to copy!")
+
+    def download_as_txt(self):
+        content = self.output_text.get("1.0", tk.END).strip()
+        if not content:
+            messagebox.showwarning("Warning", "No content to download!")
+            return
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
+            title="Save Directory Structure"
+        )
+        
+        if file_path:
+            try:
+                with open(file_path, 'w', encoding='utf-8') as file:
+                    file.write(content)
+                messagebox.showinfo("Success", "File saved successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save file: {str(e)}")
 
     def run(self):
         self.root.mainloop()
