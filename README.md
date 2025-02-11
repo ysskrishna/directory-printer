@@ -7,6 +7,9 @@ A GUI application for viewing and exporting directory structures. This tool prov
 ## Features
 
 - Interactive GUI for directory selection
+- Copy directory tree to clipboard
+- Export directory structure to text files
+- Smart file filtering using standard ignore patterns (.gitignore, .dockerignore) to exclude unwanted files and directories
 - Tree-like visualization of directory structures
 - Handles permission errors gracefully
 - Cross-platform compatibility (Windows, Linux, macOS)
