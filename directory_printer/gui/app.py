@@ -35,6 +35,7 @@ class DirectoryPrinterApp:
         self.root.minsize(600, 400)
         self.logo_image = None
         self.config = load_config()
+        self.last_selected_folder = None
 
         # Set window icon
         logo_path = get_resource_path(os.path.join("directory_printer", "assets", "logo.png"))
@@ -110,6 +111,7 @@ class DirectoryPrinterApp:
     def browse_folder(self):
         folder_selected = filedialog.askdirectory()
         if folder_selected:
+            self.last_selected_folder = folder_selected
             self.output_text.delete("1.0", tk.END)
             self.output_text.insert(tk.END, f"{folder_selected}\n")
             output_list = print_structure(folder_selected)
@@ -130,10 +132,15 @@ class DirectoryPrinterApp:
             messagebox.showwarning("Warning", "No content to download!")
             return
 
+        default_name = "directory_structure.txt"
+        if self.last_selected_folder:
+            default_name = os.path.basename(self.last_selected_folder) + ".txt"
+
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            title="Save Directory Structure"
+            title="Save Directory Structure",
+            initialfile=default_name
         )
         
         if file_path:
