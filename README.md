@@ -3,6 +3,9 @@
 A GUI application for viewing and exporting directory structures. This tool provides a simple and intuitive way to visualize the structure of directories and their contents.
 
 
+<a href="https://www.producthunt.com/posts/directory-printer?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-directory&#0045;printer" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=867506&theme=light&t=1739465160860" alt="Directory&#0032;Printer - Desktop&#0032;app&#0032;for&#0032;viewing&#0032;and&#0032;exporting&#0032;directory&#0032;structures | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
+
 Check out this short video demonstration of Directory Printer in action:
 
 [![Directory Printer Demo](./media/header-image.png)](https://youtu.be/RWOIlvB1PJU)
@@ -150,9 +153,6 @@ You can also run the hooks manually on all files:
 poetry run pre-commit run --all-files
 ```
 
-## Links
-
-- [Product Hunt](https://www.producthunt.com/posts/directory-printer)
 
 ## License
 
