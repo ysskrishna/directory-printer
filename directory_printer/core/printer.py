@@ -1,10 +1,10 @@
 import os
 from typing import List, Optional, Callable
-import re
+from directory_printer.core.ignore_pattern import IgnorePattern
 
 
-def parse_gitignore(gitignore_path: str) -> List[str]:
-    """Parse gitignore file and return list of patterns"""
+def parse_gitignore(gitignore_path: str) -> List[IgnorePattern]:
+    """Parse gitignore file and return list of patterns with metadata"""
     if not os.path.exists(gitignore_path):
         return []
     
@@ -15,37 +15,23 @@ def parse_gitignore(gitignore_path: str) -> List[str]:
             # Skip empty lines and comments
             if not line or line.startswith('#'):
                 continue
-                
-            # Remove trailing spaces and slashes
+            
+            # Check for negation
+            is_negation = line.startswith('!')
+            # Check for directory-only pattern
+            is_dir_only = line.rstrip().endswith('/')
+            
+            # Remove trailing spaces
             pattern = line.rstrip('/ ')
-            
-            # Convert .gitignore pattern to regex pattern
-            if pattern.startswith('/'):
-                # Pattern starting with / matches from project root
-                pattern = pattern[1:]  # Remove leading /
-                pattern = f'^{pattern}'  # Anchor to start
-            else:
-                # Pattern without leading / can match anywhere in path
-                pattern = f'.*?{pattern}'
-            
-            # Handle special characters
-            pattern = (
-                pattern
-                .replace('.', r'\.')  # Escape dots
-                .replace('**', '.*')  # ** matches anything including /
-                .replace('*', '[^/]*')  # * matches anything except /
-                .replace('?', '[^/]')  # ? matches any single character except /
-            )
-            
-            # Make sure pattern matches full path component
-            pattern = f'{pattern}(?:$|/.*)'
-            
-            patterns.append(pattern)
+            if is_dir_only:
+                pattern = pattern + '/'
+                
+            patterns.append(IgnorePattern(pattern, is_negation, is_dir_only))
         return patterns
 
 
-def should_ignore(path: str, base_path: str, ignore_patterns: List[str]) -> bool:
-    """Check if path should be ignored based on gitignore patterns"""
+def should_ignore(path: str, base_path: str, ignore_patterns: List[IgnorePattern]) -> bool:
+    """Check if path should be ignored based on gitignore patterns with proper precedence"""
     if not ignore_patterns:
         return False
     
@@ -54,22 +40,34 @@ def should_ignore(path: str, base_path: str, ignore_patterns: List[str]) -> bool
     # Convert Windows path separators to Unix style
     rel_path = rel_path.replace('\\', '/')
     
-    # Check each pattern
+    # Track if path is matched by any pattern
+    is_ignored = False
+    matched_by_negation = False
+    
+    # Check each pattern in order
     for pattern in ignore_patterns:
-        if re.match(pattern, rel_path):
-            return True
+        if pattern.matches(rel_path):
+            if pattern.is_negation:
+                matched_by_negation = True
+                is_ignored = False
+            elif not matched_by_negation:  # Only set to ignored if not matched by negation
+                is_ignored = True
             
         # Also check parent directories
         parts = rel_path.split('/')
         for i in range(len(parts)):
             partial_path = '/'.join(parts[:i+1])
-            if re.match(pattern, partial_path):
-                return True
+            if pattern.matches(partial_path):
+                if pattern.is_negation:
+                    matched_by_negation = True
+                    is_ignored = False
+                elif not matched_by_negation:  # Only set to ignored if not matched by negation
+                    is_ignored = True
                 
-    return False
+    return is_ignored
 
 
-def count_entries(path: str, ignore_patterns: List[str] = None) -> int:
+def count_entries(path: str, ignore_patterns: List[IgnorePattern] = None) -> int:
     """Count total number of entries for progress tracking"""
     total = 0
     for root, dirs, files in os.walk(path):
@@ -119,14 +117,16 @@ def print_structure(
             output_list.append(f"Error: Directory '{current_path}' not found!")
             return True
 
-        for i, entry in enumerate(entries):
+        # Filter out ignored entries before processing
+        filtered_entries = []
+        for entry in entries:
             full_path = os.path.join(current_path, entry)
-            
-            # Skip if path matches gitignore patterns
-            if ignore_patterns and should_ignore(full_path, path, ignore_patterns):
-                continue
-                
-            is_last = i == len(entries) - 1
+            if not ignore_patterns or not should_ignore(full_path, path, ignore_patterns):
+                filtered_entries.append(entry)
+
+        for i, entry in enumerate(filtered_entries):
+            full_path = os.path.join(current_path, entry)
+            is_last = i == len(filtered_entries) - 1
             symbol = "└── " if is_last else "├── "
             output_list.append(f"{current_prefix}{symbol}{entry}")
             
