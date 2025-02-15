@@ -57,36 +57,38 @@ class DirectoryPrinterApp:
         self.setup_ui()
 
     def change_language(self, *args):
+        # Get the selected language name and find its code
         selected_lang = self.language_var.get()
+        selected_code = None
         for code, name in self.languages.items():
             if name == selected_lang:
+                selected_code = code
                 set_language(code)
                 break
-        self.update_ui_texts()
-
-    def update_ui_texts(self):
-        """Update all UI texts after language change"""
+        
+        # Save current state
+        current_directory = self.directory_var.get()
+        current_gitignore = self.gitignore_var.get()
+        current_output = self.output_text.get("1.0", tk.END)
+        
+        # Destroy all widgets
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        
         # Update window title
         self.root.title(t('TITLE', version=version('directory-printer')))
         
-        # Update directory frame
-        self.dir_label.config(text=t('DIRECTORY.LABEL'))
-        self.browse_btn.config(text=t('DIRECTORY.BROWSE'))
-        self.clear_dir_btn.config(text=t('DIRECTORY.CLEAR'))
+        # Rebuild UI
+        self.setup_ui()
         
-        # Update gitignore frame
-        self.gitignore_label.config(text=t('IGNORE_FILE.LABEL'))
-        self.browse_gitignore_btn.config(text=t('IGNORE_FILE.BROWSE'))
-        self.clear_gitignore_btn.config(text=t('IGNORE_FILE.CLEAR'))
+        # Restore state
+        self.directory_var.set(current_directory)
+        self.gitignore_var.set(current_gitignore)
+        self.output_text.insert("1.0", current_output)
         
-        # Update action buttons
-        self.generate_btn.config(text=t('ACTIONS.GENERATE'))
-        self.reset_btn.config(text=t('ACTIONS.RESET'))
-        self.stop_button.config(text=t('ACTIONS.STOP'))
-        
-        # Update bottom buttons
-        self.copy_btn.config(text=t('ACTIONS.COPY'))
-        self.download_btn.config(text=t('ACTIONS.DOWNLOAD'))
+        # Set the language selector to the correct value
+        if selected_code:
+            self.language_var.set(self.languages[selected_code])
 
     def open_link(self, url):
         webbrowser.open(url)
