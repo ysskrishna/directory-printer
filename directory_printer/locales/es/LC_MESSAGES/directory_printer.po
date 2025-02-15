@@ -1,0 +1,97 @@
+# Spanish translations for directory-printer package.
+# Copyright (C) 2024 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the directory-printer package.
+msgid ""
+msgstr ""
+"Project-Id-Version: directory-printer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-15 12:00+0000\n"
+"PO-Revision-Date: 2024-02-15 12:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Directory Printer v{}"
+msgstr "Impresor de Directorios v{}"
+
+msgid "Select Directory"
+msgstr "Seleccionar Directorio"
+
+msgid "Select ignore file (Optional)"
+msgstr "Seleccionar archivo de ignorar (Opcional)"
+
+msgid "Browse"
+msgstr "Explorar"
+
+msgid "Clear"
+msgstr "Limpiar"
+
+msgid "Generate Directory Structure"
+msgstr "Generar Estructura del Directorio"
+
+msgid "Reset All"
+msgstr "Restablecer Todo"
+
+msgid "Stop"
+msgstr "Detener"
+
+msgid "Copy to Clipboard"
+msgstr "Copiar al Portapapeles"
+
+msgid "Download"
+msgstr "Descargar"
+
+msgid "Processing: {}/{} entries ({}%)"
+msgstr "Procesando: {}/{} entradas ({}%)"
+
+msgid "Please select a directory first!"
+msgstr "¡Por favor, seleccione un directorio primero!"
+
+msgid "Failed to process directory: {}"
+msgstr "Error al procesar el directorio: {}"
+
+msgid "Content copied to clipboard!"
+msgstr "¡Contenido copiado al portapapeles!"
+
+msgid "No content to copy!"
+msgstr "¡No hay contenido para copiar!"
+
+msgid "No content to download!"
+msgstr "¡No hay contenido para descargar!"
+
+msgid "File saved successfully!"
+msgstr "¡Archivo guardado exitosamente!"
+
+msgid "Failed to save file: {}"
+msgstr "Error al guardar el archivo: {}"
+
+msgid "Warning"
+msgstr "Advertencia"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Success"
+msgstr "Éxito"
+
+msgid "Stop Generation?"
+msgstr "¿Detener Generación?"
+
+msgid "Quit Application?"
+msgstr "¿Salir de la Aplicación?"
+
+msgid "Do you want to stop?\n\n• Yes: Stop and clear output\n• No: Continue processing"
+msgstr "¿Desea detener?\n\n• Sí: Detener y limpiar salida\n• No: Continuar procesando"
+
+msgid "Processing is in progress.\nDo you want to quit?\n\n• Yes: Stop processing and quit\n• No: Continue processing"
+msgstr "El procesamiento está en curso.\n¿Desea salir?\n\n• Sí: Detener procesamiento y salir\n• No: Continuar procesando"
+
+msgid "[Permission Denied]"
+msgstr "[Permiso Denegado]"
+
+msgid "Error: Directory '{}' not found!"
+msgstr "Error: ¡Directorio '{}' no encontrado!" 
