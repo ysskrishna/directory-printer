@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-02-15
+### Added
+- Added a window close handler to confirm if the user wants to quit the application
+- Added stop button feature to stop the directory scanning process
+
+### Changed
+- Updated github actions to include version number in the release files
+- Cleaned up README file and seperated the Development Guide into a separate file
+
+
 ## [0.3.0] - 2025-02-11
 ### Added
 - Added progress bar and status indicator for directory scanning
@@ -36,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Permission error handling
   - Directory structure export functionality
 
+[0.4.0]: https://github.com/ysskrishna/directory-printer/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ysskrishna/directory-printer/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ysskrishna/directory-printer/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ysskrishna/directory-printer/releases/tag/v0.1.0 
