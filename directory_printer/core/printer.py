@@ -84,7 +84,7 @@ def print_structure(
     prefix: str = "",
     output_list: Optional[List[str]] = None,
     gitignore_path: Optional[str] = None,
-    progress_callback: Optional[Callable[[int, int], None]] = None
+    progress_callback: Optional[Callable[[int, int], bool]] = None
 ) -> List[str]:
     """
     Print directory structure with gitignore support and progress tracking
@@ -94,7 +94,8 @@ def print_structure(
         prefix: Prefix for current line (used for tree structure)
         output_list: List to store output lines
         gitignore_path: Path to .gitignore file
-        progress_callback: Callback function(current, total) for progress updates
+        progress_callback: Callback function(current, total) -> bool for progress updates
+                         Returns False to stop processing, True to continue
     """
     if output_list is None:
         output_list = []
@@ -106,17 +107,17 @@ def print_structure(
     total_entries = count_entries(path, ignore_patterns)
     current_entry = 0
 
-    def _print_structure_recursive(current_path: str, current_prefix: str = "") -> None:
+    def _print_structure_recursive(current_path: str, current_prefix: str = "") -> bool:
         nonlocal current_entry
         
         try:
             entries = sorted(os.listdir(current_path))
         except PermissionError:
             output_list.append(f"{current_prefix}[Permission Denied]")
-            return
+            return True
         except FileNotFoundError:
             output_list.append(f"Error: Directory '{current_path}' not found!")
-            return
+            return True
 
         for i, entry in enumerate(entries):
             full_path = os.path.join(current_path, entry)
@@ -131,11 +132,16 @@ def print_structure(
             
             current_entry += 1
             if progress_callback:
-                progress_callback(current_entry, total_entries)
+                if not progress_callback(current_entry, total_entries):
+                    return False  # Stop processing
             
             if os.path.isdir(full_path):
                 next_prefix = "    " if is_last else "│   "
-                _print_structure_recursive(full_path, current_prefix + next_prefix)
+                if not _print_structure_recursive(full_path, current_prefix + next_prefix):
+                    return False  # Stop processing
+        
+        return True  # Continue processing
 
-    _print_structure_recursive(path, prefix)
+    if not _print_structure_recursive(path, prefix):
+        return []  # Return empty list if stopped
     return output_list

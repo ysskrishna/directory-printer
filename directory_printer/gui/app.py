@@ -37,6 +37,7 @@ class DirectoryPrinterApp:
         self.config = load_config()
         self.selected_folder = None
         self.gitignore_path = None
+        self.stop_processing = False
 
         # Set window icon
         logo_path = get_resource_path(os.path.join("directory_printer", "assets", "logo.png"))
@@ -101,22 +102,47 @@ class DirectoryPrinterApp:
         clear_gitignore_btn = ttk.Button(gitignore_frame, text="Clear", command=self.clear_gitignore)
         clear_gitignore_btn.grid(row=0, column=3, padx=2)
 
-        # Action buttons
+        # Action buttons and progress frame
         action_frame = ttk.Frame(main_frame)
-        action_frame.pack(fill=tk.X, pady=(0, 10))
+        action_frame.pack(fill=tk.X, pady=(0, 5))
         
-        ttk.Button(action_frame, text="Generate Directory Structure", command=self.process_directory).pack(side=tk.LEFT, padx=2)
-        ttk.Button(action_frame, text="Reset All", command=self.reset_all).pack(side=tk.LEFT, padx=2)
+        # Button container
+        button_container = ttk.Frame(action_frame)
+        button_container.pack(fill=tk.X, pady=(0, 5))
+        ttk.Button(button_container, text="Generate Directory Structure", command=self.process_directory).pack(side=tk.LEFT, padx=2)
+        ttk.Button(button_container, text="Reset All", command=self.reset_all).pack(side=tk.LEFT, padx=2)
 
         # Progress bar (hidden initially)
-        self.progress_frame = ttk.Frame(main_frame)
-        self.progress_frame.pack(fill=tk.X, pady=5)
-        self.progress_bar = ttk.Progressbar(self.progress_frame, mode='determinate')
-        self.progress_label = ttk.Label(self.progress_frame, text="")
+        self.progress_frame = ttk.Frame(action_frame)
+        self.progress_frame.pack(fill=tk.X)
         
+        # Progress bar and controls frame using grid
+        progress_controls = ttk.Frame(self.progress_frame)
+        progress_controls.pack(fill=tk.X)
+        progress_controls.grid_columnconfigure(0, weight=1)  # Make progress bar expand
+        
+        # Create a single row container for progress bar and stop button
+        progress_row = ttk.Frame(progress_controls)
+        progress_row.pack(fill=tk.X)
+        progress_row.grid_columnconfigure(0, weight=1)  # Make progress bar expand
+        
+        # Progress bar and stop button in same row
+        self.progress_bar = ttk.Progressbar(progress_row, mode='determinate')
+        self.progress_bar.grid(row=0, column=0, sticky='ew', padx=(0, 5))
+        
+        self.stop_button = ttk.Button(progress_row, text="Stop", command=self.confirm_stop)
+        self.stop_button.grid(row=0, column=1)
+        
+        # Progress label below the progress bar
+        self.progress_label = ttk.Label(progress_controls, text="")
+        self.progress_label.pack(anchor='w')
+        
+        # Initially hide all progress elements
+        self.progress_frame.pack_forget()
+
         # Output area
         self.output_text = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=80, height=25)
-        self.output_text.pack(pady=5, fill=tk.BOTH, expand=True)
+        self.output_text.pack(pady=(0, 5), fill=tk.BOTH, expand=True)
 
         # Buttons frame for copy and download
         buttons_frame = ttk.Frame(main_frame)
@@ -180,8 +206,19 @@ class DirectoryPrinterApp:
         self.output_text.delete("1.0", tk.END)
         self.progress_bar["value"] = 0
         self.progress_label.config(text="")
-        self.progress_bar.pack_forget()
-        self.progress_label.pack_forget()
+        self.progress_frame.pack_forget()  # Hide entire progress frame
+
+    def confirm_stop(self):
+        if not self.stop_processing:  # Only show dialog if not already stopping
+            if messagebox.askquestion(  # Changed to askquestion for consistent sound
+                "Stop Generation?",
+                "Do you want to stop?\n\n"
+                "• Yes: Stop and clear output\n"
+                "• No: Continue processing"
+            ) == 'yes':  # askquestion returns 'yes' or 'no'
+                self.stop_processing = True
+                self.output_text.delete("1.0", tk.END)
+                self.progress_frame.pack_forget()  # Hide entire progress frame
 
     def process_directory(self):
         if not self.selected_folder:
@@ -191,9 +228,10 @@ class DirectoryPrinterApp:
         self.output_text.delete("1.0", tk.END)
         self.output_text.insert(tk.END, f"{self.selected_folder}\n")
         
-        # Reset progress bar
+        # Reset progress bar and stop flag
         self.progress_bar["value"] = 0
         self.progress_label.config(text="")
+        self.stop_processing = False
         
         try:
             output_list = print_structure(
@@ -201,23 +239,33 @@ class DirectoryPrinterApp:
                 gitignore_path=self.gitignore_path,
                 progress_callback=self.update_progress
             )
-            self.output_text.insert(tk.END, "\n".join(output_list))
+            if not self.stop_processing:  # Only update output if not stopped
+                self.output_text.insert(tk.END, "\n".join(output_list))
+            else:
+                # Clear output if stopped
+                self.output_text.delete("1.0", tk.END)
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to process directory: {str(e)}")
+            if not self.stop_processing:  # Only show error if not stopped
+                messagebox.showerror("Error", f"Failed to process directory: {str(e)}")
         finally:
-            # Hide progress bar when done
-            self.progress_bar.pack_forget()
-            self.progress_label.pack_forget()
+            # Hide progress frame when done or stopped
+            self.progress_frame.pack_forget()
+            # Reset stop flag
+            self.stop_processing = False
 
     def update_progress(self, current: int, total: int):
-        if not self.progress_bar.winfo_ismapped():
-            self.progress_bar.pack(fill=tk.X, side=tk.TOP)
-            self.progress_label.pack(side=tk.TOP)
+        if self.stop_processing:
+            return False  # Signal to stop processing
+            
+        # Show progress frame if not already visible
+        if not self.progress_frame.winfo_ismapped():
+            self.progress_frame.pack(fill=tk.X, pady=5)
         
         progress = (current / total) * 100
         self.progress_bar["value"] = progress
         self.progress_label.config(text=f"Processing: {current}/{total} entries ({progress:.1f}%)")
-        self.root.update()
+        self.root.update()  # Use update to process events and keep UI responsive
+        return True  # Continue processing
 
     def browse_folder(self):
         folder_selected = filedialog.askdirectory()
