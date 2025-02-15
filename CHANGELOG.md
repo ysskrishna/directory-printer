@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-02-15
+### Added
+- Introduced a new `IgnorePattern` class that supports more complex ignore patterns
+
+### Fixed
+- Resolved issues with handling negation patterns and directory-only patterns in the `.gitignore` file parsing logic
+
+
 ## [0.4.0] - 2025-02-15
 ### Added
 - Added a window close handler to confirm if the user wants to quit the application
@@ -46,6 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Permission error handling
   - Directory structure export functionality
 
+
+[0.5.0]: https://github.com/ysskrishna/directory-printer/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/ysskrishna/directory-printer/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ysskrishna/directory-printer/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ysskrishna/directory-printer/compare/v0.1.0...v0.2.0
