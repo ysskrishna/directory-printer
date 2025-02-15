@@ -22,16 +22,25 @@
       "TITLE": "File",
       "OPEN_RECENT": "Open Recent",
       "CLEAR_RECENT": "Clear Recently Opened",
-      "EXIT": "Exit"
-    },
-    "SETTINGS": {
-      "TITLE": "Settings",
       "LANGUAGE": "Language",
       "LANGUAGES": {
         "ENGLISH": "English",
         "SPANISH": "Español",
         "CHINESE": "中文"
-      }
+      },
+      "EXIT": "Exit"
+    },
+    "HELP": {
+      "TITLE": "Help",
+      "FAQ": "FAQ",
+      "CHECK_UPDATES": "Check for Updates",
+      "CURRENT_VERSION": "Current Version: %{version}"
+    },
+    "ABOUT": {
+      "TITLE": "About",
+      "AUTHOR": "Author",
+      "PRODUCTHUNT": "Product Hunt",
+      "GITHUB": "GitHub"
     }
   },
   "PROGRESS": {
@@ -46,7 +55,10 @@
     "SAVE_ERROR": "Failed to save file: %{error}",
     "PROCESS_ERROR": "Failed to process directory: %{error}",
     "PERMISSION_DENIED": "[Permission Denied]",
-    "DIRECTORY_NOT_FOUND": "Error: Directory '%{path}' not found!"
+    "DIRECTORY_NOT_FOUND": "Error: Directory '%{path}' not found!",
+    "UPDATE_AVAILABLE": "New version %{version} is available!\nWould you like to download it?",
+    "UPDATE_LATEST": "You are using the latest version!",
+    "UPDATE_ERROR": "Failed to check for updates: %{error}"
   },
   "DIALOGS": {
     "STOP_TITLE": "Stop Generation?",

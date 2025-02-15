@@ -22,16 +22,28 @@
       "TITLE": "Archivo",
       "OPEN_RECENT": "Abrir Reciente",
       "CLEAR_RECENT": "Limpiar Archivos Recientes",
-      "EXIT": "Salir"
-    },
-    "SETTINGS": {
-      "TITLE": "Configuración",
       "LANGUAGE": "Idioma",
       "LANGUAGES": {
         "ENGLISH": "English",
         "SPANISH": "Español",
         "CHINESE": "中文"
-      }
+      },
+      "EXIT": "Salir"
+    },
+    "SETTINGS": {
+      "TITLE": "Configuración"
+    },
+    "HELP": {
+      "TITLE": "Ayuda",
+      "FAQ": "Preguntas Frecuentes",
+      "CHECK_UPDATES": "Buscar Actualizaciones",
+      "CURRENT_VERSION": "Versión Actual: %{version}"
+    },
+    "ABOUT": {
+      "TITLE": "Acerca de",
+      "AUTHOR": "Autor",
+      "PRODUCTHUNT": "Product Hunt",
+      "GITHUB": "GitHub"
     }
   },
   "PROGRESS": {
@@ -46,7 +58,10 @@
     "SAVE_ERROR": "Error al guardar el archivo: %{error}",
     "PROCESS_ERROR": "Error al procesar el directorio: %{error}",
     "PERMISSION_DENIED": "[Permiso Denegado]",
-    "DIRECTORY_NOT_FOUND": "Error: ¡Directorio '%{path}' no encontrado!"
+    "DIRECTORY_NOT_FOUND": "Error: ¡Directorio '%{path}' no encontrado!",
+    "UPDATE_AVAILABLE": "¡Nueva versión %{version} disponible!\n¿Le gustaría descargarla?",
+    "UPDATE_LATEST": "¡Está utilizando la última versión!",
+    "UPDATE_ERROR": "Error al buscar actualizaciones: %{error}"
   },
   "DIALOGS": {
     "STOP_TITLE": "¿Detener Generación?",

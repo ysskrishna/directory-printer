@@ -1,6 +1,8 @@
 import os
 import tkinter as tk
 import webbrowser
+import json
+import urllib.request
 from importlib.metadata import version
 from tkinter import filedialog, scrolledtext, messagebox, ttk
 
@@ -38,12 +40,13 @@ class DirectoryPrinterApp:
         self.selected_folder = None
         self.gitignore_path = None
         self.stop_processing = False
+        self.current_version = version('directory-printer')
 
         # Language options
         self.languages = {
-            'en': t('MENU.SETTINGS.LANGUAGES.ENGLISH'),
-            'es': t('MENU.SETTINGS.LANGUAGES.SPANISH'),
-            'zh': t('MENU.SETTINGS.LANGUAGES.CHINESE')
+            'en': t('MENU.FILE.LANGUAGES.ENGLISH'),
+            'es': t('MENU.FILE.LANGUAGES.SPANISH'),
+            'zh': t('MENU.FILE.LANGUAGES.CHINESE')
         }
 
         # Add window close handler
@@ -82,15 +85,10 @@ class DirectoryPrinterApp:
         file_menu.add_separator()
         file_menu.add_command(label=t('MENU.FILE.CLEAR_RECENT'), command=self.clear_recent_files)
         file_menu.add_separator()
-        file_menu.add_command(label=t('MENU.FILE.EXIT'), command=self.on_closing)
-
-        # Settings menu
-        settings_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label=t('MENU.SETTINGS.TITLE'), menu=settings_menu)
         
         # Language submenu
-        language_menu = tk.Menu(settings_menu, tearoff=0)
-        settings_menu.add_cascade(label=t('MENU.SETTINGS.LANGUAGE'), menu=language_menu)
+        language_menu = tk.Menu(file_menu, tearoff=0)
+        file_menu.add_cascade(label=t('MENU.FILE.LANGUAGE'), menu=language_menu)
         
         # Add language options
         current_language = get_language()
@@ -99,6 +97,40 @@ class DirectoryPrinterApp:
                 label=f"{'✓ ' if lang_code == current_language else '  '}{lang_name}",
                 command=lambda code=lang_code: self.change_language_from_menu(code)
             )
+            
+        file_menu.add_separator()
+        file_menu.add_command(label=t('MENU.FILE.EXIT'), command=self.on_closing)
+
+        # Help menu
+        help_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label=t('MENU.HELP.TITLE'), menu=help_menu)
+        
+        # Add help menu items
+        help_menu.add_command(label=t('MENU.HELP.FAQ'), command=self.open_faq)
+        help_menu.add_command(label=t('MENU.HELP.CHECK_UPDATES'), command=self.check_updates)
+        help_menu.add_separator()
+        help_menu.add_command(
+            label=t('MENU.HELP.CURRENT_VERSION', version=self.current_version),
+            state=tk.DISABLED
+        )
+
+        # About menu
+        about_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label=t('MENU.ABOUT.TITLE'), menu=about_menu)
+        
+        # Add about menu items
+        about_menu.add_command(
+            label=t('MENU.ABOUT.AUTHOR'),
+            command=lambda: self.open_link(self.project_metadata.get("author_linkedin"))
+        )
+        about_menu.add_command(
+            label=t('MENU.ABOUT.PRODUCTHUNT'),
+            command=lambda: self.open_link(self.project_metadata.get("product_hunt_url"))
+        )
+        about_menu.add_command(
+            label=t('MENU.ABOUT.GITHUB'),
+            command=lambda: self.open_link(self.project_metadata.get("github_repo_url"))
+        )
 
     def update_recent_menu(self):
         """Update the recent files menu"""
@@ -474,6 +506,39 @@ class DirectoryPrinterApp:
 
     def run(self):
         self.root.mainloop()
+
+    def open_faq(self):
+        """Open FAQ section in GitHub"""
+        webbrowser.open(f"{self.project_metadata.get('faqs_url')}")
+
+    def check_updates(self):
+        """Check for updates by comparing current version with latest release"""
+        try:
+            # Get latest release info from GitHub API
+            api_url = self.project_metadata.get('release_api_url')
+            with urllib.request.urlopen(api_url) as response:
+                data = json.loads(response.read())
+                latest_version = data['tag_name'].lstrip('v')
+                
+                # Compare versions
+                if latest_version > self.current_version:
+                    if messagebox.askyesno(
+                        t('DIALOGS.SUCCESS'),
+                        t('MESSAGES.UPDATE_AVAILABLE', version=latest_version),
+                        icon='info'
+                    ):
+                        webbrowser.open(data['html_url'])
+                else:
+                    messagebox.showinfo(
+                        t('DIALOGS.SUCCESS'),
+                        t('MESSAGES.UPDATE_LATEST'),
+                        icon='info'
+                    )
+        except Exception as e:
+            messagebox.showerror(
+                t('DIALOGS.ERROR'),
+                t('MESSAGES.UPDATE_ERROR', error=str(e))
+            )
 
 
 def main():

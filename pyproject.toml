@@ -12,6 +12,9 @@ author_name = "ysskrishna"
 author_linkedin = "https://linkedin.com/in/ysskrishna"
 github_repo_url = "https://github.com/ysskrishna/directory-printer"
 product_hunt_url = "https://www.producthunt.com/posts/directory-printer"
+faqs_url = "https://github.com/ysskrishna/directory-printer#faq"
+release_api_url = "https://api.github.com/repos/ysskrishna/directory-printer/releases/latest"
+
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"

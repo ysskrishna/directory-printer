@@ -22,16 +22,25 @@
       "TITLE": "文件",
       "OPEN_RECENT": "最近打开",
       "CLEAR_RECENT": "清除最近打开",
-      "EXIT": "退出"
-    },
-    "SETTINGS": {
-      "TITLE": "设置",
       "LANGUAGE": "语言",
       "LANGUAGES": {
         "ENGLISH": "English",
         "SPANISH": "Español",
         "CHINESE": "中文"
-      }
+      },
+      "EXIT": "退出"
+    },
+    "HELP": {
+      "TITLE": "帮助",
+      "FAQ": "常见问题",
+      "CHECK_UPDATES": "检查更新",
+      "CURRENT_VERSION": "当前版本：%{version}"
+    },
+    "ABOUT": {
+      "TITLE": "关于",
+      "AUTHOR": "作者",
+      "PRODUCTHUNT": "Product Hunt",
+      "GITHUB": "GitHub"
     }
   },
   "PROGRESS": {
@@ -46,7 +55,10 @@
     "SAVE_ERROR": "保存文件失败：%{error}",
     "PROCESS_ERROR": "处理目录失败：%{error}",
     "PERMISSION_DENIED": "[权限被拒绝]",
-    "DIRECTORY_NOT_FOUND": "错误：目录 '%{path}' 未找到！"
+    "DIRECTORY_NOT_FOUND": "错误：目录 '%{path}' 未找到！",
+    "UPDATE_AVAILABLE": "发现新版本 %{version}！\n您要下载吗？",
+    "UPDATE_LATEST": "您正在使用最新版本！",
+    "UPDATE_ERROR": "检查更新失败：%{error}"
   },
   "DIALOGS": {
     "STOP_TITLE": "停止生成？",
