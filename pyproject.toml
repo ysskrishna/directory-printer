@@ -17,6 +17,7 @@ product_hunt_url = "https://www.producthunt.com/posts/directory-printer"
 python = ">=3.9,<3.13"
 Pillow = "^10.2.0"
 tomli = "^2.0.1"
+python-i18n = "^0.3.9"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.1.0"

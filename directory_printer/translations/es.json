@@ -1,0 +1,50 @@
+{
+  "TITLE": "Impresor de Directorios v%{version}",
+  "DIRECTORY": {
+    "LABEL": "Seleccionar Directorio",
+    "BROWSE": "Explorar",
+    "CLEAR": "Limpiar"
+  },
+  "IGNORE_FILE": {
+    "LABEL": "Seleccionar archivo de ignorar (Opcional)",
+    "BROWSE": "Explorar",
+    "CLEAR": "Limpiar"
+  },
+  "ACTIONS": {
+    "GENERATE": "Generar Estructura del Directorio",
+    "RESET": "Restablecer Todo",
+    "STOP": "Detener",
+    "COPY": "Copiar al Portapapeles",
+    "DOWNLOAD": "Descargar"
+  },
+  "PROGRESS": {
+    "PROCESSING": "Procesando: %{current}/%{total} elementos (%{percent}%)"
+  },
+  "MESSAGES": {
+    "SELECT_DIRECTORY": "¡Por favor, seleccione un directorio primero!",
+    "COPY_SUCCESS": "¡Contenido copiado al portapapeles!",
+    "NO_CONTENT": "¡No hay contenido para copiar!",
+    "NO_CONTENT_DOWNLOAD": "¡No hay contenido para descargar!",
+    "SAVE_SUCCESS": "¡Archivo guardado exitosamente!",
+    "SAVE_ERROR": "Error al guardar el archivo: %{error}",
+    "PROCESS_ERROR": "Error al procesar el directorio: %{error}",
+    "PERMISSION_DENIED": "[Permiso Denegado]",
+    "DIRECTORY_NOT_FOUND": "Error: ¡Directorio '%{path}' no encontrado!"
+  },
+  "DIALOGS": {
+    "STOP_TITLE": "¿Detener Generación?",
+    "STOP_MESSAGE": "¿Desea detener?\n\n• Sí: Detener y limpiar salida\n• No: Continuar procesando",
+    "QUIT_TITLE": "¿Salir de la Aplicación?",
+    "QUIT_MESSAGE": "El procesamiento está en curso.\n¿Desea salir?\n\n• Sí: Detener procesamiento y salir\n• No: Continuar procesando",
+    "WARNING": "Advertencia",
+    "ERROR": "Error",
+    "SUCCESS": "Éxito"
+  },
+  "SAVE_DIALOG": {
+    "TITLE": "Guardar Estructura del Directorio",
+    "FILETYPES": {
+      "TEXT": "Archivos de texto",
+      "ALL": "Todos los archivos"
+    }
+  }
+} 

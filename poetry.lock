@@ -522,6 +522,21 @@ spelling = ["pyenchant (>=3.2,<4.0)"]
 testutils = ["gitpython (>3)"]
 
 [[package]]
+name = "python-i18n"
+version = "0.3.9"
+description = "Translation library for Python"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "python-i18n-0.3.9.tar.gz", hash = "sha256:df97f3d2364bf3a7ebfbd6cbefe8e45483468e52a9e30b909c6078f5f471e4e8"},
+    {file = "python_i18n-0.3.9-py3-none-any.whl", hash = "sha256:bda5b8d889ebd51973e22e53746417bd32783c9bd6780fd27cadbb733915651d"},
+]
+
+[package.extras]
+yaml = ["pyyaml (>=3.10)"]
+
+[[package]]
 name = "pywin32-ctypes"
 version = "0.2.3"
 description = "A (partial) reimplementation of pywin32 using ctypes/cffi"
@@ -730,4 +745,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "5e7615932a7e9388354ca989712959e04f896670c39df1d4967011e196071c97"
+content-hash = "72e987ff88294a2353815b4b229d7fe8f07b65f3cb2ab7d583e486664a515620"

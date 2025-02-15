@@ -53,6 +53,21 @@ poetry run isort .
 poetry run pylint directory_printer
 ```
 
+### Adding a New Package
+
+To add a new package to the project using Poetry:
+
+1. Add the package:
+   ```bash
+   poetry add package_name
+   ```
+   This will add the package to the `pyproject.toml` file and install it in the virtual environment.
+
+2. If the package is only needed for development (e.g., testing, linting), add it as a development dependency:
+   ```bash
+   poetry add --dev package_name
+   ```
+
 ### Creating Releases
 
 This project uses GitHub Actions to automatically build and publish binaries when a new version tag is pushed. To create a new release:

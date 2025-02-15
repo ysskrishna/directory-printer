@@ -3,22 +3,13 @@ import tkinter as tk
 import webbrowser
 from importlib.metadata import version
 from tkinter import filedialog, scrolledtext, messagebox, ttk
-import sys
 
 import tomli
 from PIL import Image, ImageTk
 
 from directory_printer.core.printer import print_structure
-
-
-def get_resource_path(relative_path):
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    
-    return os.path.join(base_path, relative_path)
+from directory_printer.core.i18n_config import init_i18n, t, set_language
+from directory_printer.core.utilities import get_resource_path
 
 
 def load_config():
@@ -30,14 +21,24 @@ def load_config():
 
 class DirectoryPrinterApp:
     def __init__(self):
+        # Initialize i18n
+        init_i18n()
+        
         self.root = tk.Tk()
-        self.root.title(f"Directory Printer v{version('directory-printer')}")
+        self.root.title(t('TITLE', version=version('directory-printer')))
         self.root.minsize(700, 400)
         self.logo_image = None
         self.config = load_config()
         self.selected_folder = None
         self.gitignore_path = None
         self.stop_processing = False
+
+        # Language options
+        self.languages = {
+            'en': 'English',
+            'es': 'Español',
+            'zh': '中文'
+        }
 
         # Add window close handler
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -55,6 +56,38 @@ class DirectoryPrinterApp:
 
         self.setup_ui()
 
+    def change_language(self, *args):
+        selected_lang = self.language_var.get()
+        for code, name in self.languages.items():
+            if name == selected_lang:
+                set_language(code)
+                break
+        self.update_ui_texts()
+
+    def update_ui_texts(self):
+        """Update all UI texts after language change"""
+        # Update window title
+        self.root.title(t('TITLE', version=version('directory-printer')))
+        
+        # Update directory frame
+        self.dir_label.config(text=t('DIRECTORY.LABEL'))
+        self.browse_btn.config(text=t('DIRECTORY.BROWSE'))
+        self.clear_dir_btn.config(text=t('DIRECTORY.CLEAR'))
+        
+        # Update gitignore frame
+        self.gitignore_label.config(text=t('IGNORE_FILE.LABEL'))
+        self.browse_gitignore_btn.config(text=t('IGNORE_FILE.BROWSE'))
+        self.clear_gitignore_btn.config(text=t('IGNORE_FILE.CLEAR'))
+        
+        # Update action buttons
+        self.generate_btn.config(text=t('ACTIONS.GENERATE'))
+        self.reset_btn.config(text=t('ACTIONS.RESET'))
+        self.stop_button.config(text=t('ACTIONS.STOP'))
+        
+        # Update bottom buttons
+        self.copy_btn.config(text=t('ACTIONS.COPY'))
+        self.download_btn.config(text=t('ACTIONS.DOWNLOAD'))
+
     def open_link(self, url):
         webbrowser.open(url)
 
@@ -69,41 +102,50 @@ class DirectoryPrinterApp:
         main_frame = tk.Frame(self.root, padx=10, pady=10)
         main_frame.pack(fill=tk.BOTH, expand=True)
 
+        # Language selector
+        lang_frame = ttk.Frame(main_frame)
+        lang_frame.pack(fill=tk.X, pady=(0, 5))
+        
+        self.language_var = tk.StringVar(value=self.languages['en'])
+        lang_menu = ttk.Combobox(lang_frame, textvariable=self.language_var, values=list(self.languages.values()), state='readonly', width=15)
+        lang_menu.pack(side=tk.RIGHT)
+        lang_menu.bind('<<ComboboxSelected>>', self.change_language)
+
         # Directory selection row
         dir_frame = ttk.Frame(main_frame)
         dir_frame.pack(fill=tk.X, pady=(0, 5))
         dir_frame.grid_columnconfigure(1, weight=1)  # Make the entry expand
         
-        dir_label = ttk.Label(dir_frame, text="Select Directory", width=25)
-        dir_label.grid(row=0, column=0, padx=5)
+        self.dir_label = ttk.Label(dir_frame, text=t('DIRECTORY.LABEL'), width=25)
+        self.dir_label.grid(row=0, column=0, padx=5)
         
         self.directory_var = tk.StringVar()
         self.directory_entry = ttk.Entry(dir_frame, textvariable=self.directory_var)
         self.directory_entry.grid(row=0, column=1, padx=5, sticky='ew')
         
-        browse_btn = ttk.Button(dir_frame, text="Browse", command=self.browse_folder)
-        browse_btn.grid(row=0, column=2, padx=2)
+        self.browse_btn = ttk.Button(dir_frame, text=t('DIRECTORY.BROWSE'), command=self.browse_folder)
+        self.browse_btn.grid(row=0, column=2, padx=2)
         
-        clear_btn = ttk.Button(dir_frame, text="Clear", command=self.clear_directory)
-        clear_btn.grid(row=0, column=3, padx=2)
+        self.clear_dir_btn = ttk.Button(dir_frame, text=t('DIRECTORY.CLEAR'), command=self.clear_directory)
+        self.clear_dir_btn.grid(row=0, column=3, padx=2)
 
         # Gitignore selection row
         gitignore_frame = ttk.Frame(main_frame)
         gitignore_frame.pack(fill=tk.X, pady=(0, 10))
         gitignore_frame.grid_columnconfigure(1, weight=1)  # Make the entry expand
         
-        gitignore_label = ttk.Label(gitignore_frame, text="Select ignore file (Optional)", width=25)
-        gitignore_label.grid(row=0, column=0, padx=5)
+        self.gitignore_label = ttk.Label(gitignore_frame, text=t('IGNORE_FILE.LABEL'), width=25)
+        self.gitignore_label.grid(row=0, column=0, padx=5)
         
         self.gitignore_var = tk.StringVar()
         self.gitignore_entry = ttk.Entry(gitignore_frame, textvariable=self.gitignore_var)
         self.gitignore_entry.grid(row=0, column=1, padx=5, sticky='ew')
         
-        browse_gitignore_btn = ttk.Button(gitignore_frame, text="Browse", command=self.select_gitignore)
-        browse_gitignore_btn.grid(row=0, column=2, padx=2)
+        self.browse_gitignore_btn = ttk.Button(gitignore_frame, text=t('IGNORE_FILE.BROWSE'), command=self.select_gitignore)
+        self.browse_gitignore_btn.grid(row=0, column=2, padx=2)
         
-        clear_gitignore_btn = ttk.Button(gitignore_frame, text="Clear", command=self.clear_gitignore)
-        clear_gitignore_btn.grid(row=0, column=3, padx=2)
+        self.clear_gitignore_btn = ttk.Button(gitignore_frame, text=t('IGNORE_FILE.CLEAR'), command=self.clear_gitignore)
+        self.clear_gitignore_btn.grid(row=0, column=3, padx=2)
 
         # Action buttons and progress frame
         action_frame = ttk.Frame(main_frame)
@@ -112,8 +154,10 @@ class DirectoryPrinterApp:
         # Button container
         button_container = ttk.Frame(action_frame)
         button_container.pack(fill=tk.X, pady=(0, 5))
-        ttk.Button(button_container, text="Generate Directory Structure", command=self.process_directory).pack(side=tk.LEFT, padx=2)
-        ttk.Button(button_container, text="Reset All", command=self.reset_all).pack(side=tk.LEFT, padx=2)
+        self.generate_btn = ttk.Button(button_container, text=t('ACTIONS.GENERATE'), command=self.process_directory)
+        self.generate_btn.pack(side=tk.LEFT, padx=2)
+        self.reset_btn = ttk.Button(button_container, text=t('ACTIONS.RESET'), command=self.reset_all)
+        self.reset_btn.pack(side=tk.LEFT, padx=2)
 
         # Progress bar (hidden initially)
         self.progress_frame = ttk.Frame(action_frame)
@@ -133,7 +177,7 @@ class DirectoryPrinterApp:
         self.progress_bar = ttk.Progressbar(progress_row, mode='determinate')
         self.progress_bar.grid(row=0, column=0, sticky='ew', padx=(0, 5))
         
-        self.stop_button = ttk.Button(progress_row, text="Stop", command=self.confirm_stop)
+        self.stop_button = ttk.Button(progress_row, text=t('ACTIONS.STOP'), command=self.confirm_stop)
         self.stop_button.grid(row=0, column=1)
         
         # Progress label below the progress bar
@@ -155,8 +199,10 @@ class DirectoryPrinterApp:
         # Left side - action buttons
         left_buttons = ttk.Frame(buttons_frame)
         left_buttons.grid(row=0, column=0, sticky='w')
-        ttk.Button(left_buttons, text="Copy to Clipboard", command=self.copy_to_clipboard).pack(side=tk.LEFT, padx=2)
-        ttk.Button(left_buttons, text="Download", command=self.download_as_txt).pack(side=tk.LEFT, padx=2)
+        self.copy_btn = ttk.Button(left_buttons, text=t('ACTIONS.COPY'), command=self.copy_to_clipboard)
+        self.copy_btn.pack(side=tk.LEFT, padx=2)
+        self.download_btn = ttk.Button(left_buttons, text=t('ACTIONS.DOWNLOAD'), command=self.download_as_txt)
+        self.download_btn.pack(side=tk.LEFT, padx=2)
 
         # Right side - links
         links_frame = ttk.Frame(buttons_frame)
@@ -185,8 +231,8 @@ class DirectoryPrinterApp:
 
     def select_gitignore(self):
         file_path = filedialog.askopenfilename(
-            title="Select .gitignore file",
-            filetypes=[(".gitignore", ".gitignore"), ("All files", "*.*")]
+            title=t('IGNORE_FILE.LABEL'),
+            filetypes=[(".gitignore", ".gitignore"), (t('SAVE_DIALOG.FILETYPES.ALL'), "*.*")]
         )
         if file_path:
             self.gitignore_path = file_path
@@ -215,10 +261,8 @@ class DirectoryPrinterApp:
         if not self.stop_processing:  # Only show dialog if not already stopping
             self.root.bell()  # Ring the system bell
             if messagebox.askyesno(
-                "Stop Generation?",
-                "Do you want to stop?\n\n"
-                "• Yes: Stop and clear output\n"
-                "• No: Continue processing"
+                t('DIALOGS.STOP_TITLE'),
+                t('DIALOGS.STOP_MESSAGE')
             ):
                 self.stop_processing = True
                 self.output_text.delete("1.0", tk.END)
@@ -226,7 +270,7 @@ class DirectoryPrinterApp:
 
     def process_directory(self):
         if not self.selected_folder:
-            messagebox.showwarning("Warning", "Please select a directory first!")
+            messagebox.showwarning(t('DIALOGS.WARNING'), t('MESSAGES.SELECT_DIRECTORY'))
             return
 
         self.output_text.delete("1.0", tk.END)
@@ -250,7 +294,7 @@ class DirectoryPrinterApp:
                 self.output_text.delete("1.0", tk.END)
         except Exception as e:
             if not self.stop_processing:  # Only show error if not stopped
-                messagebox.showerror("Error", f"Failed to process directory: {str(e)}")
+                messagebox.showerror(t('DIALOGS.ERROR'), t('MESSAGES.PROCESS_ERROR', error=str(e)))
         finally:
             # Hide progress frame when done or stopped
             self.progress_frame.pack_forget()
@@ -267,7 +311,7 @@ class DirectoryPrinterApp:
         
         progress = (current / total) * 100
         self.progress_bar["value"] = progress
-        self.progress_label.config(text=f"Processing: {current}/{total} entries ({progress:.1f}%)")
+        self.progress_label.config(text=t('PROGRESS.PROCESSING', current=current, total=total, percent=f"{progress:.1f}"))
         self.root.update()  # Use update to process events and keep UI responsive
         return True  # Continue processing
 
@@ -282,14 +326,14 @@ class DirectoryPrinterApp:
         if content:
             self.root.clipboard_clear()
             self.root.clipboard_append(content)
-            messagebox.showinfo("Success", "Content copied to clipboard!")
+            messagebox.showinfo(t('DIALOGS.SUCCESS'), t('MESSAGES.COPY_SUCCESS'))
         else:
-            messagebox.showwarning("Warning", "No content to copy!")
+            messagebox.showwarning(t('DIALOGS.WARNING'), t('MESSAGES.NO_CONTENT'))
 
     def download_as_txt(self):
         content = self.output_text.get("1.0", tk.END).strip()
         if not content:
-            messagebox.showwarning("Warning", "No content to download!")
+            messagebox.showwarning(t('DIALOGS.WARNING'), t('MESSAGES.NO_CONTENT_DOWNLOAD'))
             return
 
         default_name = "directory_structure.txt"
@@ -298,8 +342,8 @@ class DirectoryPrinterApp:
 
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
-            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            title="Save Directory Structure",
+            filetypes=[(t('SAVE_DIALOG.FILETYPES.TEXT'), "*.txt"), (t('SAVE_DIALOG.FILETYPES.ALL'), "*.*")],
+            title=t('SAVE_DIALOG.TITLE'),
             initialfile=default_name
         )
         
@@ -307,9 +351,9 @@ class DirectoryPrinterApp:
             try:
                 with open(file_path, 'w', encoding='utf-8') as file:
                     file.write(content)
-                messagebox.showinfo("Success", "File saved successfully!")
+                messagebox.showinfo(t('DIALOGS.SUCCESS'), t('MESSAGES.SAVE_SUCCESS'))
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to save file: {str(e)}")
+                messagebox.showerror(t('DIALOGS.ERROR'), t('MESSAGES.SAVE_ERROR', error=str(e)))
 
     def on_closing(self):
         """Handle window close event"""
@@ -320,10 +364,8 @@ class DirectoryPrinterApp:
             # If processing, ask for confirmation
             self.root.bell()
             if messagebox.askyesno(
-                "Quit Application?",
-                "Processing is in progress.\nDo you want to quit?\n\n"
-                "• Yes: Stop processing and quit\n"
-                "• No: Continue processing"
+                t('DIALOGS.QUIT_TITLE'),
+                t('DIALOGS.QUIT_MESSAGE')
             ):
                 self.stop_processing = True
                 self.root.destroy()

@@ -1,0 +1,50 @@
+{
+  "TITLE": "目录打印工具 v%{version}",
+  "DIRECTORY": {
+    "LABEL": "选择目录",
+    "BROWSE": "浏览",
+    "CLEAR": "清除"
+  },
+  "IGNORE_FILE": {
+    "LABEL": "选择忽略文件（可选）",
+    "BROWSE": "浏览",
+    "CLEAR": "清除"
+  },
+  "ACTIONS": {
+    "GENERATE": "生成目录结构",
+    "RESET": "重置所有",
+    "STOP": "停止",
+    "COPY": "复制到剪贴板",
+    "DOWNLOAD": "下载"
+  },
+  "PROGRESS": {
+    "PROCESSING": "处理中：%{current}/%{total} 项 (%{percent}%)"
+  },
+  "MESSAGES": {
+    "SELECT_DIRECTORY": "请先选择一个目录！",
+    "COPY_SUCCESS": "内容已复制到剪贴板！",
+    "NO_CONTENT": "没有可复制的内容！",
+    "NO_CONTENT_DOWNLOAD": "没有可下载的内容！",
+    "SAVE_SUCCESS": "文件保存成功！",
+    "SAVE_ERROR": "保存文件失败：%{error}",
+    "PROCESS_ERROR": "处理目录失败：%{error}",
+    "PERMISSION_DENIED": "[权限被拒绝]",
+    "DIRECTORY_NOT_FOUND": "错误：目录 '%{path}' 未找到！"
+  },
+  "DIALOGS": {
+    "STOP_TITLE": "停止生成？",
+    "STOP_MESSAGE": "您想要停止吗？\n\n• 是：停止并清除输出\n• 否：继续处理",
+    "QUIT_TITLE": "退出应用？",
+    "QUIT_MESSAGE": "正在处理中。\n您想要退出吗？\n\n• 是：停止处理并退出\n• 否：继续处理",
+    "WARNING": "警告",
+    "ERROR": "错误",
+    "SUCCESS": "成功"
+  },
+  "SAVE_DIALOG": {
+    "TITLE": "保存目录结构",
+    "FILETYPES": {
+      "TEXT": "文本文件",
+      "ALL": "所有文件"
+    }
+  }
+} 

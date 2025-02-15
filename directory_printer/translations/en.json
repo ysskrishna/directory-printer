@@ -1,0 +1,50 @@
+{
+  "TITLE": "Directory Printer v%{version}",
+  "DIRECTORY": {
+    "LABEL": "Select Directory",
+    "BROWSE": "Browse",
+    "CLEAR": "Clear"
+  },
+  "IGNORE_FILE": {
+    "LABEL": "Select ignore file (Optional)",
+    "BROWSE": "Browse",
+    "CLEAR": "Clear"
+  },
+  "ACTIONS": {
+    "GENERATE": "Generate Directory Structure",
+    "RESET": "Reset All",
+    "STOP": "Stop",
+    "COPY": "Copy to Clipboard",
+    "DOWNLOAD": "Download"
+  },
+  "PROGRESS": {
+    "PROCESSING": "Processing: %{current}/%{total} entries (%{percent}%)"
+  },
+  "MESSAGES": {
+    "SELECT_DIRECTORY": "Please select a directory first!",
+    "COPY_SUCCESS": "Content copied to clipboard!",
+    "NO_CONTENT": "No content to copy!",
+    "NO_CONTENT_DOWNLOAD": "No content to download!",
+    "SAVE_SUCCESS": "File saved successfully!",
+    "SAVE_ERROR": "Failed to save file: %{error}",
+    "PROCESS_ERROR": "Failed to process directory: %{error}",
+    "PERMISSION_DENIED": "[Permission Denied]",
+    "DIRECTORY_NOT_FOUND": "Error: Directory '%{path}' not found!"
+  },
+  "DIALOGS": {
+    "STOP_TITLE": "Stop Generation?",
+    "STOP_MESSAGE": "Do you want to stop?\n\n• Yes: Stop and clear output\n• No: Continue processing",
+    "QUIT_TITLE": "Quit Application?",
+    "QUIT_MESSAGE": "Processing is in progress.\nDo you want to quit?\n\n• Yes: Stop processing and quit\n• No: Continue processing",
+    "WARNING": "Warning",
+    "ERROR": "Error",
+    "SUCCESS": "Success"
+  },
+  "SAVE_DIALOG": {
+    "TITLE": "Save Directory Structure",
+    "FILETYPES": {
+      "TEXT": "Text files",
+      "ALL": "All files"
+    }
+  }
+} 
