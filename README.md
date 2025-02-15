@@ -22,137 +22,47 @@ Check out this short video demonstration of Directory Printer in action:
 
 ## Installation
 
-### Option 1: Download Binary (Recommended)
+### Download Binary (Recommended)
 
 Download the latest release for your operating system from the [Releases page](https://github.com/ysskrishna/directory-printer/releases).
 
-- Windows: Download and extract `directory-printer-windows.zip`
-- Linux: Download and extract `directory-printer-linux.zip`
-- macOS: Download and extract `directory-printer-macos.zip`
+- Windows: Download and extract `directory-printer-windows-<version>.zip`
+- Linux: Download and extract `directory-printer-linux-<version>.zip`
+- macOS: Download and extract `directory-printer-macos-<version>.zip`
 
-### Option 2: Install from Source
+> 👩‍💻 **Are you a developer?** If you want to build from source or contribute to the project, please check out our [Development Guide](DEVELOPMENT.md).
 
-This project uses Poetry for dependency management. To install from source:
+## FAQ
 
-1. Make sure you have Poetry installed:
-   ```bash
-   pip install poetry
-   ```
+### Why do I see a warning about an unidentified developer on macOS?
 
-2. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/directory-printer.git
-   cd directory-printer
-   ```
+On macOS, you may see a warning that the application is from an unidentified developer. This is because the application is not signed with an Apple Developer Certificate. To bypass this warning:
 
-3. Install dependencies:
-   ```bash
-   poetry install
-   ```
+1. Right-click on the application
+2. Select "Open"
+3. Click "Open" in the confirmation dialog
 
-## Usage
+The application will now run without the warning.
 
-To run the application:
+### Why do I see a warning about an unknown publisher on Windows?
 
-```bash
-poetry run directory-printer
-```
+On Windows, you may see a warning that the application is from an unknown publisher. This is because the application is not signed with a code signing certificate. To bypass this warning:
 
-Or activate the virtual environment and run directly:
+1. Click "More info"
+2. Click "Run anyway"
 
-```bash
-poetry shell
-directory-printer
-```
+The application will now run without the warning.
 
-## Development
+### Why do I see a warning about an untrusted application on Linux?
 
-This project follows these development practices:
-- Code formatting with Black
-- Import sorting with isort
-- Linting with Pylint
+On Linux, you may see a warning that the application is untrusted. This is because the application is not signed with a code signing certificate. To bypass this warning:
 
-To run the development tools:
+1. Right-click on the application
+2. Select "Properties"
+3. Navigate to the "Permissions" tab
+4. Check the box next to "Allow executing file as program"
 
-```bash
-# Format code
-poetry run black .
-poetry run isort .
-
-# Run linting
-poetry run pylint directory_printer
-```
-
-### Creating Releases
-
-This project uses GitHub Actions to automatically build and publish binaries when a new version tag is pushed. To create a new release:
-
-1. Update the version in `pyproject.toml`:
-   ```toml
-   [tool.poetry]
-   version = "x.y.z"  # Update this version
-   ```
-
-2. Create and push a new tag:
-   ```bash
-   # Create a new tag
-   git tag v0.1.0  # Replace with your version
-
-   # Push the tag to GitHub
-   git push origin v0.1.0
-   ```
-
-3. GitHub Actions will automatically:
-   - Build binaries for Windows, Linux, and macOS
-   - Create a new release on GitHub
-   - Attach the binaries to the release
-
-To delete a tag if needed:
-```bash
-# Delete local tag
-git tag -d v0.1.0
-
-# Delete remote tag
-git push --delete origin v0.1.0
-```
-
-### Pre-commit Hooks
-
-This project uses pre-commit hooks to ensure code quality. The hooks run:
-- black (code formatting)
-- isort (import sorting)
-
-#### Setup
-
-1. Install dev dependencies:
-```bash
-poetry install
-```
-
-2. Install pre-commit hooks:
-```bash
-poetry run pre-commit install
-```
-
-#### Usage
-
-The hooks will run automatically on every commit. There are two ways to bypass the hooks if needed:
-
-1. Skip all hooks:
-```bash
-git commit -m "your message" --no-verify
-```
-
-2. Skip specific hooks:
-```bash
-SKIP=black,isort git commit -m "your message"
-```
-
-You can also run the hooks manually on all files:
-```bash
-poetry run pre-commit run --all-files
-```
-
+The application will now run without the warning.
 
 ## License
 
