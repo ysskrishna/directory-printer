@@ -17,6 +17,23 @@
     "COPY": "复制到剪贴板",
     "DOWNLOAD": "下载"
   },
+  "MENU": {
+    "FILE": {
+      "TITLE": "文件",
+      "OPEN_RECENT": "最近打开",
+      "CLEAR_RECENT": "清除最近打开",
+      "EXIT": "退出"
+    },
+    "SETTINGS": {
+      "TITLE": "设置",
+      "LANGUAGE": "语言",
+      "LANGUAGES": {
+        "ENGLISH": "English",
+        "SPANISH": "Español",
+        "CHINESE": "中文"
+      }
+    }
+  },
   "PROGRESS": {
     "PROCESSING": "处理中：%{current}/%{total} 项 (%{percent}%)"
   },

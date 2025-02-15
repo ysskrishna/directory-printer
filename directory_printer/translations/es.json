@@ -17,6 +17,23 @@
     "COPY": "Copiar al Portapapeles",
     "DOWNLOAD": "Descargar"
   },
+  "MENU": {
+    "FILE": {
+      "TITLE": "Archivo",
+      "OPEN_RECENT": "Abrir Reciente",
+      "CLEAR_RECENT": "Limpiar Archivos Recientes",
+      "EXIT": "Salir"
+    },
+    "SETTINGS": {
+      "TITLE": "Configuración",
+      "LANGUAGE": "Idioma",
+      "LANGUAGES": {
+        "ENGLISH": "English",
+        "SPANISH": "Español",
+        "CHINESE": "中文"
+      }
+    }
+  },
   "PROGRESS": {
     "PROCESSING": "Procesando: %{current}/%{total} elementos (%{percent}%)"
   },

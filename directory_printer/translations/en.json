@@ -17,6 +17,23 @@
     "COPY": "Copy to Clipboard",
     "DOWNLOAD": "Download"
   },
+  "MENU": {
+    "FILE": {
+      "TITLE": "File",
+      "OPEN_RECENT": "Open Recent",
+      "CLEAR_RECENT": "Clear Recently Opened",
+      "EXIT": "Exit"
+    },
+    "SETTINGS": {
+      "TITLE": "Settings",
+      "LANGUAGE": "Language",
+      "LANGUAGES": {
+        "ENGLISH": "English",
+        "SPANISH": "Español",
+        "CHINESE": "中文"
+      }
+    }
+  },
   "PROGRESS": {
     "PROCESSING": "Processing: %{current}/%{total} entries (%{percent}%)"
   },

@@ -8,36 +8,42 @@ import tomli
 from PIL import Image, ImageTk
 
 from directory_printer.core.printer import print_structure
-from directory_printer.core.i18n_config import init_i18n, t, set_language
+from directory_printer.core.i18n_config import init_i18n, t, set_language, get_language
 from directory_printer.core.utilities import get_resource_path
+from directory_printer.core.configuration import Configuration
 
 
-def load_config():
-    config_path = get_resource_path("pyproject.toml")
-    with open(config_path, "rb") as f:
-        config = tomli.load(f)
-    return config.get("tool", {}).get("directory_printer", {}).get("ui", {})
+def load_project_metadata():
+    """Load project metadata from pyproject.toml"""
+    toml_path = get_resource_path("pyproject.toml")
+    with open(toml_path, "rb") as f:
+        toml_data = tomli.load(f)
+    return toml_data.get("tool", {}).get("directory_printer", {}).get("ui", {})
 
 
 class DirectoryPrinterApp:
     def __init__(self):
-        # Initialize i18n
+        # Initialize configuration
+        self.config = Configuration()
+        
+        # Initialize i18n with saved language
         init_i18n()
+        set_language(self.config.get_language())
         
         self.root = tk.Tk()
         self.root.title(t('TITLE', version=version('directory-printer')))
         self.root.minsize(700, 400)
         self.logo_image = None
-        self.config = load_config()
+        self.project_metadata = load_project_metadata()
         self.selected_folder = None
         self.gitignore_path = None
         self.stop_processing = False
 
         # Language options
         self.languages = {
-            'en': 'English',
-            'es': 'Español',
-            'zh': '中文'
+            'en': t('MENU.SETTINGS.LANGUAGES.ENGLISH'),
+            'es': t('MENU.SETTINGS.LANGUAGES.SPANISH'),
+            'zh': t('MENU.SETTINGS.LANGUAGES.CHINESE')
         }
 
         # Add window close handler
@@ -54,41 +60,126 @@ class DirectoryPrinterApp:
             except Exception as e:
                 print(f"Could not set window icon: {e}")
 
+        # Create menu bar
+        self.create_menu_bar()
+        
         self.setup_ui()
 
-    def change_language(self, *args):
-        # Get the selected language name and find its code
-        selected_lang = self.language_var.get()
-        selected_code = None
-        for code, name in self.languages.items():
-            if name == selected_lang:
-                selected_code = code
-                set_language(code)
-                break
+    def create_menu_bar(self):
+        """Create the menu bar"""
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+
+        # File menu
+        file_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label=t('MENU.FILE.TITLE'), menu=file_menu)
         
-        # Save current state
-        current_directory = self.directory_var.get()
-        current_gitignore = self.gitignore_var.get()
-        current_output = self.output_text.get("1.0", tk.END)
+        # Recent files submenu
+        self.recent_menu = tk.Menu(file_menu, tearoff=0)
+        file_menu.add_cascade(label=t('MENU.FILE.OPEN_RECENT'), menu=self.recent_menu)
+        self.update_recent_menu()
         
-        # Destroy all widgets
-        for widget in self.root.winfo_children():
-            widget.destroy()
+        file_menu.add_separator()
+        file_menu.add_command(label=t('MENU.FILE.CLEAR_RECENT'), command=self.clear_recent_files)
+        file_menu.add_separator()
+        file_menu.add_command(label=t('MENU.FILE.EXIT'), command=self.on_closing)
+
+        # Settings menu
+        settings_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label=t('MENU.SETTINGS.TITLE'), menu=settings_menu)
         
-        # Update window title
-        self.root.title(t('TITLE', version=version('directory-printer')))
+        # Language submenu
+        language_menu = tk.Menu(settings_menu, tearoff=0)
+        settings_menu.add_cascade(label=t('MENU.SETTINGS.LANGUAGE'), menu=language_menu)
         
-        # Rebuild UI
-        self.setup_ui()
+        # Add language options
+        current_language = get_language()
+        for lang_code, lang_name in self.languages.items():
+            language_menu.add_command(
+                label=f"{'✓ ' if lang_code == current_language else '  '}{lang_name}",
+                command=lambda code=lang_code: self.change_language_from_menu(code)
+            )
+
+    def update_recent_menu(self):
+        """Update the recent files menu"""
+        self.recent_menu.delete(0, tk.END)
+        recent_files = self.config.get_recent_files()
         
-        # Restore state
-        self.directory_var.set(current_directory)
-        self.gitignore_var.set(current_gitignore)
-        self.output_text.insert("1.0", current_output)
+        if not recent_files:
+            self.recent_menu.add_command(label="(Empty)", state=tk.DISABLED)
+        else:
+            for entry in recent_files:
+                directory_path = entry.get('directory_path', '')
+                self.recent_menu.add_command(
+                    label=os.path.basename(directory_path),
+                    command=lambda e=entry: self.open_recent_file(e)
+                )
+
+    def open_recent_file(self, entry):
+        """Open a recently used file with its configuration"""
+        directory_path = entry.get('directory_path', '')
+        config = entry.get('config', {})
         
-        # Set the language selector to the correct value
-        if selected_code:
-            self.language_var.set(self.languages[selected_code])
+        if os.path.exists(directory_path):
+            # Clear output if opening a different directory
+            if self.selected_folder != directory_path:
+                self.output_text.delete("1.0", tk.END)
+                
+            self.selected_folder = directory_path
+            self.directory_var.set(directory_path)
+            
+            # Restore ignore file if it exists
+            ignore_file = config.get('ignore_file')
+            if ignore_file and os.path.exists(ignore_file):
+                self.gitignore_path = ignore_file
+                self.gitignore_var.set(ignore_file)
+            else:
+                self.gitignore_path = None
+                self.gitignore_var.set("")
+        else:
+            messagebox.showwarning(
+                t('DIALOGS.WARNING'),
+                t('MESSAGES.DIRECTORY_NOT_FOUND', path=directory_path)
+            )
+            # Remove from recent files if it doesn't exist
+            recent_files = self.config.get_recent_files()
+            recent_files = [f for f in recent_files if f.get('directory_path') != directory_path]
+            self.config.set_recent_files(recent_files)
+            self.update_recent_menu()
+
+    def clear_recent_files(self):
+        """Clear the recent files list"""
+        self.config.clear_recent_files()
+        self.update_recent_menu()
+
+    def change_language_from_menu(self, lang_code):
+        """Change language from menu selection"""
+        if lang_code != get_language():
+            set_language(lang_code)
+            self.config.set_language(lang_code)
+            
+            # Save current state
+            current_directory = self.directory_var.get()
+            current_gitignore = self.gitignore_var.get()
+            current_output = self.output_text.get("1.0", tk.END)
+            
+            # Destroy all widgets
+            for widget in self.root.winfo_children():
+                widget.destroy()
+            
+            # Update window title
+            self.root.title(t('TITLE', version=version('directory-printer')))
+            
+            # Recreate menu
+            self.create_menu_bar()
+            
+            # Rebuild UI
+            self.setup_ui()
+            
+            # Restore state
+            self.directory_var.set(current_directory)
+            self.gitignore_var.set(current_gitignore)
+            self.output_text.insert("1.0", current_output)
 
     def open_link(self, url):
         webbrowser.open(url)
@@ -103,15 +194,6 @@ class DirectoryPrinterApp:
     def setup_ui(self):
         main_frame = tk.Frame(self.root, padx=10, pady=10)
         main_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Language selector
-        lang_frame = ttk.Frame(main_frame)
-        lang_frame.pack(fill=tk.X, pady=(0, 5))
-        
-        self.language_var = tk.StringVar(value=self.languages['en'])
-        lang_menu = ttk.Combobox(lang_frame, textvariable=self.language_var, values=list(self.languages.values()), state='readonly', width=15)
-        lang_menu.pack(side=tk.RIGHT)
-        lang_menu.bind('<<ComboboxSelected>>', self.change_language)
 
         # Directory selection row
         dir_frame = ttk.Frame(main_frame)
@@ -211,7 +293,7 @@ class DirectoryPrinterApp:
         links_frame.grid(row=0, column=2, sticky='e')
 
         author_link = self.create_link_label(
-            links_frame, self.config.get("author_name"), self.config.get("author_linkedin")
+            links_frame, self.project_metadata.get("author_name"), self.project_metadata.get("author_linkedin")
         )
         author_link.pack(side=tk.LEFT)
 
@@ -219,7 +301,7 @@ class DirectoryPrinterApp:
         separator1.pack(side=tk.LEFT)
 
         product_hunt_link = self.create_link_label(
-            links_frame, "producthunt", self.config.get("product_hunt_url")
+            links_frame, "producthunt", self.project_metadata.get("product_hunt_url")
         )
         product_hunt_link.pack(side=tk.LEFT)
 
@@ -227,7 +309,7 @@ class DirectoryPrinterApp:
         separator2.pack(side=tk.LEFT)
 
         github_link = self.create_link_label(
-            links_frame, "github", self.config.get("github_repo_url")
+            links_frame, "github", self.project_metadata.get("github_repo_url")
         )
         github_link.pack(side=tk.LEFT)
 
@@ -239,9 +321,21 @@ class DirectoryPrinterApp:
         if file_path:
             self.gitignore_path = file_path
             self.gitignore_var.set(file_path)
+            
+            # Update recent files entry if a directory is selected
+            if self.selected_folder:
+                config = {'ignore_file': file_path}
+                self.config.add_recent_file(self.selected_folder, config)
+                self.update_recent_menu()
         else:
             self.gitignore_path = None
             self.gitignore_var.set("")
+            
+            # Clear ignore_file from recent files entry if a directory is selected
+            if self.selected_folder:
+                config = {}
+                self.config.add_recent_file(self.selected_folder, config)
+                self.update_recent_menu()
 
     def clear_directory(self):
         self.selected_folder = None
@@ -322,6 +416,12 @@ class DirectoryPrinterApp:
         if folder_selected:
             self.selected_folder = folder_selected
             self.directory_var.set(folder_selected)
+            # Add to recent files with current configuration
+            config = {}
+            if self.gitignore_path:
+                config['ignore_file'] = self.gitignore_path
+            self.config.add_recent_file(folder_selected, config)
+            self.update_recent_menu()
 
     def copy_to_clipboard(self):
         content = self.output_text.get("1.0", tk.END).strip()
