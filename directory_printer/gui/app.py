@@ -39,6 +39,9 @@ class DirectoryPrinterApp:
         self.gitignore_path = None
         self.stop_processing = False
 
+        # Add window close handler
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
         # Set window icon
         logo_path = get_resource_path(os.path.join("directory_printer", "assets", "logo.png"))
         if os.path.exists(logo_path):
@@ -210,12 +213,13 @@ class DirectoryPrinterApp:
 
     def confirm_stop(self):
         if not self.stop_processing:  # Only show dialog if not already stopping
-            if messagebox.askquestion(  # Changed to askquestion for consistent sound
+            self.root.bell()  # Ring the system bell
+            if messagebox.askyesno(
                 "Stop Generation?",
                 "Do you want to stop?\n\n"
                 "• Yes: Stop and clear output\n"
                 "• No: Continue processing"
-            ) == 'yes':  # askquestion returns 'yes' or 'no'
+            ):
                 self.stop_processing = True
                 self.output_text.delete("1.0", tk.END)
                 self.progress_frame.pack_forget()  # Hide entire progress frame
@@ -306,6 +310,23 @@ class DirectoryPrinterApp:
                 messagebox.showinfo("Success", "File saved successfully!")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to save file: {str(e)}")
+
+    def on_closing(self):
+        """Handle window close event"""
+        if self.stop_processing or not self.progress_frame.winfo_ismapped():
+            # If not processing or already stopped, close directly
+            self.root.destroy()
+        else:
+            # If processing, ask for confirmation
+            self.root.bell()
+            if messagebox.askyesno(
+                "Quit Application?",
+                "Processing is in progress.\nDo you want to quit?\n\n"
+                "• Yes: Stop processing and quit\n"
+                "• No: Continue processing"
+            ):
+                self.stop_processing = True
+                self.root.destroy()
 
     def run(self):
         self.root.mainloop()
