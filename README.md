@@ -19,6 +19,11 @@ Check out this short video demonstration of Directory Printer in action:
 - Tree-like visualization of directory structures
 - Handles permission errors gracefully
 - Cross-platform compatibility (Windows, Linux, macOS)
+- Multi-language support (English, Spanish, Chinese)
+- Progress tracking with status indicators
+- Recent files history
+- Configurable settings with persistent storage
+- Built-in update checker
 
 ## Installation
 
@@ -43,6 +48,24 @@ On macOS, you may see a warning that the application is from an unidentified dev
 3. Click "Open" in the confirmation dialog
 
 The application will now run without the warning.
+
+### How can I change the application language?
+
+You can change the application language through the `File` menu:
+
+1. Click on `File` in the menu bar
+2. Look for the language selection option
+3. Choose your preferred language (English, Spanish, or Chinese)
+
+The application will remember your language preference for future sessions.
+
+### How do I check for updates?
+
+You can check for new versions of Directory Printer through the `Help` menu:
+
+1. Click on `Help` in the menu bar
+2. Select `Check for Updates`
+3. The application will notify you if a new version is available
 
 ### Why do I see a warning about an unknown publisher on Windows?
 
