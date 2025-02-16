@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.0.0] - 2025-02-16
+### Added
+- Internationalization Support
+  - Added multi-language support using python-i18n package
+  - Implemented translations for English, Spanish, and Chinese languages
+  - Added language selection feature in the `File` menu
+  - Stored language preference in application settings
+
+- Enhanced File Menu Features
+  - Added `Open Recent` section to track and access last 5 recently opened files
+  - Added `Clear Open Recent` option to reset the recent files list
+  - Improved file handling with persistent storage of file history
+
+- New Configuration Management System
+  - Implemented robust configuration storage for application settings
+  - Added persistent storage for language preferences, recent files, and user settings
+  - Created a centralized configuration interface for better maintainability
+
+- Expanded Help Menu
+  - Added `Check for Updates` feature to verify and notify about new versions
+  - Implemented `FAQ` section with comprehensive user guidance
+  - Added `About` section with detailed application information
+
+### Changed
+- Architectural Improvements
+  - Refactored `get_resource_path` into core module for better code organization
+  - Enhanced resource management for better cross-module accessibility
+
+### Documentation
+- Added detailed instructions in DEVELOPMENT.md for adding new packages using poetry
+
+
 ## [0.5.0] - 2025-02-15
 ### Added
 - Introduced a new `IgnorePattern` class that supports more complex ignore patterns
@@ -55,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Directory structure export functionality
 
 
+[0.6.0]: https://github.com/ysskrishna/directory-printer/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/ysskrishna/directory-printer/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/ysskrishna/directory-printer/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ysskrishna/directory-printer/compare/v0.2.0...v0.3.0
