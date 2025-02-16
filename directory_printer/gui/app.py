@@ -239,10 +239,10 @@ class DirectoryPrinterApp:
         self.directory_entry = ttk.Entry(dir_frame, textvariable=self.directory_var)
         self.directory_entry.grid(row=0, column=1, padx=5, sticky='ew')
         
-        self.browse_btn = ttk.Button(dir_frame, text=t('DIRECTORY.BROWSE'), command=self.browse_folder)
+        self.browse_btn = ttk.Button(dir_frame, text=t('ACTIONS.BROWSE'), command=self.browse_folder)
         self.browse_btn.grid(row=0, column=2, padx=2)
         
-        self.clear_dir_btn = ttk.Button(dir_frame, text=t('DIRECTORY.CLEAR'), command=self.clear_directory)
+        self.clear_dir_btn = ttk.Button(dir_frame, text=t('ACTIONS.CLEAR'), command=self.clear_directory)
         self.clear_dir_btn.grid(row=0, column=3, padx=2)
 
         # Gitignore selection row
@@ -257,10 +257,10 @@ class DirectoryPrinterApp:
         self.gitignore_entry = ttk.Entry(gitignore_frame, textvariable=self.gitignore_var)
         self.gitignore_entry.grid(row=0, column=1, padx=5, sticky='ew')
         
-        self.browse_gitignore_btn = ttk.Button(gitignore_frame, text=t('IGNORE_FILE.BROWSE'), command=self.select_gitignore)
+        self.browse_gitignore_btn = ttk.Button(gitignore_frame, text=t('ACTIONS.BROWSE'), command=self.select_gitignore)
         self.browse_gitignore_btn.grid(row=0, column=2, padx=2)
         
-        self.clear_gitignore_btn = ttk.Button(gitignore_frame, text=t('IGNORE_FILE.CLEAR'), command=self.clear_gitignore)
+        self.clear_gitignore_btn = ttk.Button(gitignore_frame, text=t('ACTIONS.CLEAR'), command=self.clear_gitignore)
         self.clear_gitignore_btn.grid(row=0, column=3, padx=2)
 
         # Action buttons and progress frame
