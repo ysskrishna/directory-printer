@@ -39,6 +39,7 @@ class DirectoryPrinterApp:
         self.project_metadata = load_project_metadata()
         self.selected_folder = None
         self.gitignore_path = None
+        self.exclusions = None
         self.stop_processing = False
         self.current_version = version('directory-printer')
 
@@ -168,6 +169,15 @@ class DirectoryPrinterApp:
             else:
                 self.gitignore_path = None
                 self.gitignore_var.set("")
+                
+            # Restore exclusions if they exist
+            exclusions = config.get('exclusions')
+            if exclusions:
+                self.exclusions = exclusions
+                self.exclusions_var.set(','.join(exclusions))
+            else:
+                self.exclusions = None
+                self.exclusions_var.set(t('EXCLUSIONS.PLACEHOLDER'))
         else:
             messagebox.showwarning(
                 t('DIALOGS.WARNING'),
@@ -193,6 +203,7 @@ class DirectoryPrinterApp:
             # Save current state
             current_directory = self.directory_var.get()
             current_gitignore = self.gitignore_var.get()
+            current_exclusions = self.exclusions_var.get()
             current_output = self.output_text.get("1.0", tk.END)
             
             # Destroy all widgets
@@ -211,6 +222,7 @@ class DirectoryPrinterApp:
             # Restore state
             self.directory_var.set(current_directory)
             self.gitignore_var.set(current_gitignore)
+            self.exclusions_var.set(current_exclusions)
             self.output_text.insert("1.0", current_output)
 
     def open_link(self, url):
@@ -239,15 +251,15 @@ class DirectoryPrinterApp:
         self.directory_entry = ttk.Entry(dir_frame, textvariable=self.directory_var)
         self.directory_entry.grid(row=0, column=1, padx=5, sticky='ew')
         
-        self.browse_btn = ttk.Button(dir_frame, text=t('DIRECTORY.BROWSE'), command=self.browse_folder)
+        self.browse_btn = ttk.Button(dir_frame, text=t('ACTIONS.BROWSE'), command=self.browse_folder)
         self.browse_btn.grid(row=0, column=2, padx=2)
         
-        self.clear_dir_btn = ttk.Button(dir_frame, text=t('DIRECTORY.CLEAR'), command=self.clear_directory)
+        self.clear_dir_btn = ttk.Button(dir_frame, text=t('ACTIONS.CLEAR'), command=self.clear_directory)
         self.clear_dir_btn.grid(row=0, column=3, padx=2)
 
         # Gitignore selection row
         gitignore_frame = ttk.Frame(main_frame)
-        gitignore_frame.pack(fill=tk.X, pady=(0, 10))
+        gitignore_frame.pack(fill=tk.X, pady=(0, 5))
         gitignore_frame.grid_columnconfigure(1, weight=1)  # Make the entry expand
         
         self.gitignore_label = ttk.Label(gitignore_frame, text=t('IGNORE_FILE.LABEL'), width=25)
@@ -257,11 +269,29 @@ class DirectoryPrinterApp:
         self.gitignore_entry = ttk.Entry(gitignore_frame, textvariable=self.gitignore_var)
         self.gitignore_entry.grid(row=0, column=1, padx=5, sticky='ew')
         
-        self.browse_gitignore_btn = ttk.Button(gitignore_frame, text=t('IGNORE_FILE.BROWSE'), command=self.select_gitignore)
+        self.browse_gitignore_btn = ttk.Button(gitignore_frame, text=t('ACTIONS.BROWSE'), command=self.select_gitignore)
         self.browse_gitignore_btn.grid(row=0, column=2, padx=2)
         
-        self.clear_gitignore_btn = ttk.Button(gitignore_frame, text=t('IGNORE_FILE.CLEAR'), command=self.clear_gitignore)
+        self.clear_gitignore_btn = ttk.Button(gitignore_frame, text=t('ACTIONS.CLEAR'), command=self.clear_gitignore)
         self.clear_gitignore_btn.grid(row=0, column=3, padx=2)
+
+        # Exclusions input row
+        exclusions_frame = ttk.Frame(main_frame)
+        exclusions_frame.pack(fill=tk.X, pady=(0, 10))
+        exclusions_frame.grid_columnconfigure(1, weight=1)  # Make the entry expand
+        
+        self.exclusions_label = ttk.Label(exclusions_frame, text=t('EXCLUSIONS.LABEL'), width=25)
+        self.exclusions_label.grid(row=0, column=0, padx=5)
+        
+        self.exclusions_var = tk.StringVar()
+        self.exclusions_entry = ttk.Entry(exclusions_frame, textvariable=self.exclusions_var)
+        self.exclusions_entry.insert(0, t('EXCLUSIONS.PLACEHOLDER'))
+        self.exclusions_entry.bind('<FocusIn>', lambda e: self.on_exclusions_focus_in())
+        self.exclusions_entry.bind('<FocusOut>', lambda e: self.on_exclusions_focus_out())
+        self.exclusions_entry.grid(row=0, column=1, padx=5, sticky='ew')
+        
+        self.clear_exclusions_btn = ttk.Button(exclusions_frame, text=t('ACTIONS.CLEAR'), command=self.clear_exclusions)
+        self.clear_exclusions_btn.grid(row=0, column=2, padx=2)
 
         # Action buttons and progress frame
         action_frame = ttk.Frame(main_frame)
@@ -377,9 +407,25 @@ class DirectoryPrinterApp:
         self.gitignore_path = None
         self.gitignore_var.set("")
 
+    def on_exclusions_focus_in(self):
+        """Handle focus in event for exclusions entry"""
+        if self.exclusions_var.get() == t('EXCLUSIONS.PLACEHOLDER'):
+            self.exclusions_var.set('')
+
+    def on_exclusions_focus_out(self):
+        """Handle focus out event for exclusions entry"""
+        if not self.exclusions_var.get().strip():
+            self.exclusions_var.set(t('EXCLUSIONS.PLACEHOLDER'))
+
+    def clear_exclusions(self):
+        """Clear exclusions input"""
+        self.exclusions = None
+        self.exclusions_var.set(t('EXCLUSIONS.PLACEHOLDER'))
+
     def reset_all(self):
         self.clear_directory()
         self.clear_gitignore()
+        self.clear_exclusions()
         self.output_text.delete("1.0", tk.END)
         self.progress_bar["value"] = 0
         self.progress_label.config(text="")
@@ -409,17 +455,49 @@ class DirectoryPrinterApp:
         self.progress_label.config(text="")
         self.stop_processing = False
         
+        # Process exclusions
+        exclusions_text = self.exclusions_var.get()
+        if exclusions_text and exclusions_text != t('EXCLUSIONS.PLACEHOLDER'):
+            self.exclusions = [p.strip() for p in exclusions_text.split(',') if p.strip()]
+        else:
+            self.exclusions = None
+        
         try:
-            output_list = print_structure(
-                self.selected_folder,
-                gitignore_path=self.gitignore_path,
-                progress_callback=self.update_progress
-            )
-            if not self.stop_processing:  # Only update output if not stopped
-                self.output_text.insert(tk.END, "\n".join(output_list))
-            else:
-                # Clear output if stopped
-                self.output_text.delete("1.0", tk.END)
+            # Create temporary gitignore file with combined patterns if needed
+            temp_gitignore = None
+            if self.exclusions:
+                if self.gitignore_path and os.path.exists(self.gitignore_path):
+                    # Read existing patterns
+                    with open(self.gitignore_path, 'r') as f:
+                        existing_patterns = f.read()
+                    # Create temporary file with combined patterns
+                    import tempfile
+                    temp_fd, temp_gitignore = tempfile.mkstemp(suffix='.gitignore')
+                    with os.fdopen(temp_fd, 'w') as f:
+                        f.write(existing_patterns + '\n' + '\n'.join(self.exclusions))
+                else:
+                    # Create temporary file with just exclusions
+                    import tempfile
+                    temp_fd, temp_gitignore = tempfile.mkstemp(suffix='.gitignore')
+                    with os.fdopen(temp_fd, 'w') as f:
+                        f.write('\n'.join(self.exclusions))
+            
+            try:
+                output_list = print_structure(
+                    self.selected_folder,
+                    gitignore_path=temp_gitignore if temp_gitignore else self.gitignore_path,
+                    progress_callback=self.update_progress
+                )
+                if not self.stop_processing:  # Only update output if not stopped
+                    self.output_text.insert(tk.END, "\n".join(output_list))
+                else:
+                    # Clear output if stopped
+                    self.output_text.delete("1.0", tk.END)
+            finally:
+                # Clean up temporary file
+                if temp_gitignore and os.path.exists(temp_gitignore):
+                    os.unlink(temp_gitignore)
+                    
         except Exception as e:
             if not self.stop_processing:  # Only show error if not stopped
                 messagebox.showerror(t('DIALOGS.ERROR'), t('MESSAGES.PROCESS_ERROR', error=str(e)))
@@ -452,6 +530,8 @@ class DirectoryPrinterApp:
             config = {}
             if self.gitignore_path:
                 config['ignore_file'] = self.gitignore_path
+            if self.exclusions:
+                config['exclusions'] = self.exclusions
             self.config.add_recent_file(folder_selected, config)
             self.update_recent_menu()
 

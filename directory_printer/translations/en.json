@@ -1,21 +1,23 @@
 {
   "TITLE": "Directory Printer v%{version}",
   "DIRECTORY": {
-    "LABEL": "Select Directory",
-    "BROWSE": "Browse",
-    "CLEAR": "Clear"
+    "LABEL": "Select Directory"
   },
   "IGNORE_FILE": {
-    "LABEL": "Select ignore file (Optional)",
-    "BROWSE": "Browse",
-    "CLEAR": "Clear"
+    "LABEL": "Select ignore file (Optional)"
+  },
+  "EXCLUSIONS": {
+    "LABEL": "Additional exclusions (Optional)",
+    "PLACEHOLDER": "Enter comma-separated patterns (e.g. *.txt, temp/)"
   },
   "ACTIONS": {
     "GENERATE": "Generate Directory Structure",
     "RESET": "Reset All",
     "STOP": "Stop",
     "COPY": "Copy to Clipboard",
-    "DOWNLOAD": "Download"
+    "DOWNLOAD": "Download",
+    "BROWSE": "Browse",
+    "CLEAR": "Clear"
   },
   "MENU": {
     "FILE": {

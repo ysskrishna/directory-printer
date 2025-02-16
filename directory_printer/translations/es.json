@@ -1,21 +1,23 @@
 {
   "TITLE": "Impresor de Directorios v%{version}",
   "DIRECTORY": {
-    "LABEL": "Seleccionar Directorio",
-    "BROWSE": "Explorar",
-    "CLEAR": "Limpiar"
+    "LABEL": "Seleccionar Directorio"
   },
   "IGNORE_FILE": {
-    "LABEL": "Seleccionar archivo de ignorar (Opcional)",
-    "BROWSE": "Explorar",
-    "CLEAR": "Limpiar"
+    "LABEL": "Seleccionar archivo de ignorar (Opcional)"
+  },
+  "EXCLUSIONS": {
+    "LABEL": "Exclusiones adicionales (Opcional)",
+    "PLACEHOLDER": "Ingrese patrones separados por comas (ej. *.txt, temp/)"
   },
   "ACTIONS": {
     "GENERATE": "Generar Estructura del Directorio",
     "RESET": "Restablecer Todo",
     "STOP": "Detener",
     "COPY": "Copiar al Portapapeles",
-    "DOWNLOAD": "Descargar"
+    "DOWNLOAD": "Descargar",
+    "BROWSE": "Explorar",
+    "CLEAR": "Limpiar"
   },
   "MENU": {
     "FILE": {

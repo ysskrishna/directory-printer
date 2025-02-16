@@ -1,21 +1,23 @@
 {
   "TITLE": "目录打印工具 v%{version}",
   "DIRECTORY": {
-    "LABEL": "选择目录",
-    "BROWSE": "浏览",
-    "CLEAR": "清除"
+    "LABEL": "选择目录"
   },
   "IGNORE_FILE": {
-    "LABEL": "选择忽略文件（可选）",
-    "BROWSE": "浏览",
-    "CLEAR": "清除"
+    "LABEL": "选择忽略文件（可选）"
+  },
+  "EXCLUSIONS": {
+    "LABEL": "额外排除项（可选）",
+    "PLACEHOLDER": "输入以逗号分隔的模式（例如：*.txt, temp/）"
   },
   "ACTIONS": {
     "GENERATE": "生成目录结构",
     "RESET": "重置所有",
     "STOP": "停止",
     "COPY": "复制到剪贴板",
-    "DOWNLOAD": "下载"
+    "DOWNLOAD": "下载",
+    "BROWSE": "浏览",
+    "CLEAR": "清除"
   },
   "MENU": {
     "FILE": {
