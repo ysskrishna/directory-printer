@@ -8,6 +8,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('directory_printer/assets/*.png', 'directory_printer/assets'),
+        ('directory_printer/translations/*.json', 'directory_printer/translations'),
         ('pyproject.toml', '.'),
     ],
     hiddenimports=[

@@ -60,44 +60,73 @@ jobs:
     
     - name: Set version
       id: version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      run: |
+        echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
       shell: bash
+
+    - name: Get Changelog Entry
+      id: changelog
+      if: matrix.os == 'ubuntu-latest'  # Only run once
+      run: |
+        # Extract the changelog content starting from the first ### section
+        CHANGELOG_CONTENT=$(awk '
+          /## \['"${VERSION}"'\]/ {p=1; next}
+          /## \[/ {p=0}
+          p && /^### / {found=1}
+          p && found {print}
+        ' CHANGELOG.md)
+        if [ -z "$CHANGELOG_CONTENT" ]; then
+          echo "Warning: No changelog entry found for version ${VERSION}"
+          CHANGELOG_CONTENT="No changelog entry found for this release."
+        fi
+        echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Create Release with Changelog
+      uses: softprops/action-gh-release@v1
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        name: Release ${{ env.VERSION }}
+        body: ${{ steps.changelog.outputs.CHANGELOG }}
+        draft: false
+        prerelease: false
 
     - name: Zip Windows artifacts
       if: matrix.os == 'windows-latest'
       run: |
         cd dist
-        7z a ../directory-printer-windows-${{ env.VERSION }}.zip directory-printer.exe
+        7z a ../directory-printer-windows-v${{ env.VERSION }}.zip directory-printer.exe
       shell: bash
     
     - name: Zip Linux artifacts
       if: matrix.os == 'ubuntu-latest'
       run: |
         cd dist
-        zip -r ../directory-printer-linux-${{ env.VERSION }}.zip directory-printer
+        zip -r ../directory-printer-linux-v${{ env.VERSION }}.zip directory-printer
       shell: bash
     
     - name: Zip macOS artifacts
       if: matrix.os == 'macos-latest'
       run: |
         cd dist
-        zip -r ../directory-printer-macos-${{ env.VERSION }}.zip directory-printer
+        zip -r ../directory-printer-macos-v${{ env.VERSION }}.zip directory-printer
       shell: bash
     
     - name: Upload Windows Release Asset
       uses: softprops/action-gh-release@v1
       if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
       with:
-        files: directory-printer-windows-${{ env.VERSION }}.zip
+        files: directory-printer-windows-v${{ env.VERSION }}.zip
 
     - name: Upload Linux Release Asset
       uses: softprops/action-gh-release@v1
       if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
       with:
-        files: directory-printer-linux-${{ env.VERSION }}.zip
+        files: directory-printer-linux-v${{ env.VERSION }}.zip
 
     - name: Upload macOS Release Asset
       uses: softprops/action-gh-release@v1
       if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/')
       with:
-        files: directory-printer-macos-${{ env.VERSION }}.zip 
+        files: directory-printer-macos-v${{ env.VERSION }}.zip 
