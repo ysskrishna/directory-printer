@@ -2,19 +2,23 @@ import os
 from typing import List, Optional, Callable
 import pathspec
 
+default_ignore_patterns = [
+    ".git/",           # Git directory
+]
 
 def parse_gitignore(gitignore_path: str) -> Optional[pathspec.PathSpec]:
     """Parse gitignore file and return a PathSpec object"""
     if not os.path.exists(gitignore_path):
         return None
     
+    patterns = default_ignore_patterns.copy()
     with open(gitignore_path, 'r') as f:
         # Read and filter out empty lines and comments
-        patterns = [
+        patterns.extend([
             line.strip()
             for line in f
             if line.strip() and not line.strip().startswith('#')
-        ]
+        ])
         return pathspec.PathSpec.from_lines('gitwildmatch', patterns)
 
 
