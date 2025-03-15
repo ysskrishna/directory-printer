@@ -1,77 +1,41 @@
 import os
 from typing import List, Optional, Callable
-from directory_printer.core.ignore_pattern import IgnorePattern
+import pathspec
 
 
-def parse_gitignore(gitignore_path: str) -> List[IgnorePattern]:
-    """Parse gitignore file and return list of patterns with metadata"""
+def parse_gitignore(gitignore_path: str) -> Optional[pathspec.PathSpec]:
+    """Parse gitignore file and return a PathSpec object"""
     if not os.path.exists(gitignore_path):
-        return []
+        return None
     
     with open(gitignore_path, 'r') as f:
-        patterns = []
-        for line in f:
-            line = line.strip()
-            # Skip empty lines and comments
-            if not line or line.startswith('#'):
-                continue
-            
-            # Check for negation
-            is_negation = line.startswith('!')
-            # Check for directory-only pattern
-            is_dir_only = line.rstrip().endswith('/')
-            
-            # Remove trailing spaces
-            pattern = line.rstrip('/ ')
-            if is_dir_only:
-                pattern = pattern + '/'
-                
-            patterns.append(IgnorePattern(pattern, is_negation, is_dir_only))
-        return patterns
+        # Read and filter out empty lines and comments
+        patterns = [
+            line.strip()
+            for line in f
+            if line.strip() and not line.strip().startswith('#')
+        ]
+        return pathspec.PathSpec.from_lines('gitwildmatch', patterns)
 
 
-def should_ignore(path: str, base_path: str, ignore_patterns: List[IgnorePattern]) -> bool:
-    """Check if path should be ignored based on gitignore patterns with proper precedence"""
-    if not ignore_patterns:
+def should_ignore(path: str, base_path: str, spec: Optional[pathspec.PathSpec]) -> bool:
+    """Check if path should be ignored based on gitignore patterns"""
+    if not spec:
         return False
     
     # Get relative path from base directory
     rel_path = os.path.relpath(path, base_path)
-    # Convert Windows path separators to Unix style
+    # Convert Windows path separators to Unix style and normalize path
     rel_path = rel_path.replace('\\', '/')
     
-    # Track if path is matched by any pattern
-    is_ignored = False
-    matched_by_negation = False
-    
-    # Check each pattern in order
-    for pattern in ignore_patterns:
-        if pattern.matches(rel_path):
-            if pattern.is_negation:
-                matched_by_negation = True
-                is_ignored = False
-            elif not matched_by_negation:  # Only set to ignored if not matched by negation
-                is_ignored = True
-            
-        # Also check parent directories
-        parts = rel_path.split('/')
-        for i in range(len(parts)):
-            partial_path = '/'.join(parts[:i+1])
-            if pattern.matches(partial_path):
-                if pattern.is_negation:
-                    matched_by_negation = True
-                    is_ignored = False
-                elif not matched_by_negation:  # Only set to ignored if not matched by negation
-                    is_ignored = True
-                
-    return is_ignored
+    return spec.match_file(rel_path)
 
 
-def count_entries(path: str, ignore_patterns: List[IgnorePattern] = None) -> int:
+def count_entries(path: str, spec: Optional[pathspec.PathSpec] = None) -> int:
     """Count total number of entries for progress tracking"""
     total = 0
     for root, dirs, files in os.walk(path):
-        if ignore_patterns and should_ignore(root, path, ignore_patterns):
+        if spec and should_ignore(root, path, spec):
             continue
         total += len(files) + len(dirs)
     return total
@@ -99,10 +63,10 @@ def print_structure(
         output_list = []
         
     # Parse gitignore patterns if provided
-    ignore_patterns = parse_gitignore(gitignore_path) if gitignore_path else []
+    spec = parse_gitignore(gitignore_path) if gitignore_path else None
     
     # Count total entries for progress tracking
-    total_entries = count_entries(path, ignore_patterns)
+    total_entries = count_entries(path, spec)
     current_entry = 0
 
     def _print_structure_recursive(current_path: str, current_prefix: str = "") -> bool:
@@ -121,7 +85,7 @@ def print_structure(
         filtered_entries = []
         for entry in entries:
             full_path = os.path.join(current_path, entry)
-            if not ignore_patterns or not should_ignore(full_path, path, ignore_patterns):
+            if not spec or not should_ignore(full_path, path, spec):
                 filtered_entries.append(entry)
 
         for i, entry in enumerate(filtered_entries):
