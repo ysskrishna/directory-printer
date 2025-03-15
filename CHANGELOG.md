@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-03-15
+### Added
+- Added `pathspec` package for improved .gitignore pattern handling
+- Inlcuded `.git` as default ignore pattern when any .gitignore file is selected
+- Automated release management system:
+  - `scripts/release.sh` script for creating version branches and tags
+  - `scripts/delete-release.sh` script for cleaning up versions
+- Added `RELEASES.md` for documenting release process
+
+### Changed
+- Reorganized documentation by creating dedicated `Documentation` section in `README.md` for:
+  - CHANGELOG.md - Project history and version information
+  - DEVELOPMENT.md - Development setup and guidelines
+  - RELEASES.md - Release process documentation
 
 ## [1.0.0] - 2025-02-16
 ### Added
@@ -33,6 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Architectural Improvements
   - Refactored `get_resource_path` into core module for better code organization
   - Enhanced resource management for better cross-module accessibility
+
+- Enhanced github worflow to auto add the release changelog from CHANGELOG.md file
 
 ### Documentation
 - Added detailed instructions in DEVELOPMENT.md for adding new packages using poetry
@@ -88,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Directory structure export functionality
 
 
+[1.1.0]: https://github.com/ysskrishna/directory-printer/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ysskrishna/directory-printer/compare/v0.5.0...v1.0.0
 [0.5.0]: https://github.com/ysskrishna/directory-printer/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/ysskrishna/directory-printer/compare/v0.3.0...v0.4.0

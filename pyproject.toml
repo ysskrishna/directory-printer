@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "directory-printer"
-version = "1.0.0"
+version = "1.1.0"
 description = "A GUI application for viewing and exporting directory structures"
 authors = ["ysskrishna <sivasaikrishnassk@gmail.com>"]
 license = "AGPL-3.0"
@@ -21,6 +21,7 @@ python = ">=3.9,<3.13"
 Pillow = "^10.2.0"
 tomli = "^2.0.1"
 python-i18n = "^0.3.9"
+pathspec = "0.12.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.1.0"
