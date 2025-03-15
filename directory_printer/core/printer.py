@@ -28,7 +28,18 @@ def should_ignore(path: str, base_path: str, spec: Optional[pathspec.PathSpec]) 
     # Convert Windows path separators to Unix style and normalize path
     rel_path = rel_path.replace('\\', '/')
     
-    return spec.match_file(rel_path)
+    # Check if the path itself matches
+    if spec.match_file(rel_path):
+        return True
+        
+    # Check if any parent directory matches
+    path_parts = rel_path.split('/')
+    for i in range(len(path_parts)):
+        partial_path = '/'.join(path_parts[:i+1])
+        if spec.match_file(partial_path) or spec.match_file(partial_path + '/'):
+            return True
+            
+    return False
 
 
 def count_entries(path: str, spec: Optional[pathspec.PathSpec] = None) -> int:
