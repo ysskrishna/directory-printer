@@ -35,7 +35,12 @@ Download the latest release for your operating system from the [Releases page](h
 - Linux: Download and extract `directory-printer-linux-<version>.zip`
 - macOS: Download and extract `directory-printer-macos-<version>.zip`
 
-> 👩‍💻 **Are you a developer?** If you want to build from source or contribute to the project, please check out our [Development Guide](DEVELOPMENT.md).
+
+## Documentation
+
+- **CHANGELOG.md**: Contains a chronologically ordered list of notable changes for each version of the project. See [CHANGELOG.md](CHANGELOG.md) for the full history of changes.
+- **DEVELOPMENT.md**: Comprehensive guide for developers, including installation from source, development practices, dependency management with Poetry, and pre-commit hook setup. See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development guidelines.
+- **RELEASES.md**: Documents our release pipeline process, including branch management, version tagging, and release creation procedures. See [RELEASES.md](RELEASES.md) for detailed release guidelines.
 
 ## FAQ
 
