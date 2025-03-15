@@ -40,9 +40,9 @@ Download the latest release for your operating system from the [Releases page](h
 
 ## Documentation
 
-- **CHANGELOG.md**: Contains a chronologically ordered list of notable changes for each version of the project. See [CHANGELOG.md](CHANGELOG.md) for the full history of changes.
-- **DEVELOPMENT.md**: Comprehensive guide for developers, including installation from source, development practices, dependency management with Poetry, and pre-commit hook setup. See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development guidelines.
-- **RELEASES.md**: Documents our release pipeline process, including branch management, version tagging, and release creation procedures. See [RELEASES.md](RELEASES.md) for detailed release guidelines.
+- **[CHANGELOG.md](CHANGELOG.md)**: Contains a chronologically ordered list of notable changes for each version of the project.
+- **[DEVELOPMENT.md](DEVELOPMENT.md)**: Comprehensive guide for developers, including installation from source, development practices, dependency management with Poetry, and pre-commit hook setup.
+- **[RELEASES.md](RELEASES.md)**: Documents our release pipeline process, including branch management, version tagging, and release creation procedures.
 
 ## FAQ
 
