@@ -6,10 +6,16 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
+    permissions:
+      contents: write
     name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -19,10 +25,12 @@ jobs:
       fail-fast: false  # Continue with other OS builds even if one fails
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      with:
+        persist-credentials: false
     
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: ${{ matrix.python-version }}
     
@@ -84,7 +92,7 @@ jobs:
         echo "EOF" >> $GITHUB_OUTPUT
 
     - name: Create Release with Changelog
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
       if: matrix.os == 'ubuntu-latest'
       with:
         name: Release ${{ env.VERSION }}
@@ -96,37 +104,37 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         cd dist
-        7z a ../directory-printer-windows-v${{ env.VERSION }}.zip directory-printer.exe
+        7z a ../directory-printer-windows-v${VERSION}.zip directory-printer.exe
       shell: bash
     
     - name: Zip Linux artifacts
       if: matrix.os == 'ubuntu-latest'
       run: |
         cd dist
-        zip -r ../directory-printer-linux-v${{ env.VERSION }}.zip directory-printer
+        zip -r ../directory-printer-linux-v${VERSION}.zip directory-printer
       shell: bash
     
     - name: Zip macOS artifacts
       if: matrix.os == 'macos-latest'
       run: |
         cd dist
-        zip -r ../directory-printer-macos-v${{ env.VERSION }}.zip directory-printer
+        zip -r ../directory-printer-macos-v${VERSION}.zip directory-printer
       shell: bash
     
     - name: Upload Windows Release Asset
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
       if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
       with:
         files: directory-printer-windows-v${{ env.VERSION }}.zip
 
     - name: Upload Linux Release Asset
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
       if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
       with:
         files: directory-printer-linux-v${{ env.VERSION }}.zip
 
     - name: Upload macOS Release Asset
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
       if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/')
       with:
         files: directory-printer-macos-v${{ env.VERSION }}.zip 
