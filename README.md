@@ -4,6 +4,9 @@ A GUI application for viewing and exporting directory structures. This tool prov
 
 
 <a href="https://www.producthunt.com/posts/directory-printer?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-directory&#0045;printer" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=867506&theme=light&t=1739465160860" alt="Directory&#0032;Printer - Desktop&#0032;app&#0032;for&#0032;viewing&#0032;and&#0032;exporting&#0032;directory&#0032;structures | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  <a href="https://github.com/ysskrishna/directory-printer/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ysskrishna/directory-printer?style=flat-square" alt="License: AGPL-3.0" /></a>
+  <a href="https://github.com/ysskrishna/directory-printer/releases"><img src="https://img.shields.io/github/v/release/ysskrishna/directory-printer?label=release&style=flat-square" alt="GitHub release" /></a>
+  <a href="https://ysskrishna.space"><img src="https://img.shields.io/badge/author-ysskrishna.space-informational?style=flat-square" alt="Author site" /></a>
 
 
 ## Video Demo 👇
@@ -94,8 +97,36 @@ On Linux, you may see a warning that the application is untrusted. This is becau
 
 The application will now run without the warning.
 
+## Built and maintained by
+
+Directory Printer is built and maintained by:
+
+| | Name | GitHub | Role |
+|---|------|--------|------|
+| <img src="https://github.com/ysskrishna.png?size=120" width="60" height="60" alt="Y. Siva Sai Krishna"> | **Y. Siva Sai Krishna** | [@ysskrishna](https://github.com/ysskrishna) | Creator |
+
+## Changelog
+
+See [CHANGELOG](CHANGELOG.md) for release history.
+
+## Support
+
+If you find this project helpful:
+
+- ⭐ Star the repository
+- 🐛 [Report issues](https://github.com/ysskrishna/directory-printer/issues)
+- 🔀 Submit pull requests
+- 💝 [Sponsor on GitHub](https://github.com/sponsors/ysskrishna)
+
 ## License
 
-Copyright (c) 2025 [Y. Siva Sai Krishna](https://github.com/ysskrishna)
+AGPL-3.0 © [Y. Siva Sai Krishna](https://github.com/ysskrishna) — see [LICENSE](LICENSE) for details.
 
-This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+---
+
+<p align="left">
+  <a href="https://github.com/ysskrishna">Author's GitHub</a> •
+  <a href="https://linkedin.com/in/ysskrishna">Author's LinkedIn</a> •
+  <a href="https://ysskrishna.space">Author's site</a> •
+  <a href="https://github.com/ysskrishna/directory-printer/issues">Report Issues</a>
+</p>
